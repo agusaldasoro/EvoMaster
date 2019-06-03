@@ -5,14 +5,10 @@ package org.evomaster.core.problem.rest.resource.model.dependency
  */
 open class RelatedTo(
         private val key: String,
-        open val targets : MutableList<out Any>,
+        val targets : MutableList<out Any>,
         var probability: Double,
         var additionalInfo : String = ""
 ){
-
-    init {
-        assert(targets.isNotEmpty())
-    }
     companion object {
         private const val DIRECT_DEPEND =  "$->$"
 
@@ -31,4 +27,3 @@ open class RelatedTo(
     open fun getTargetsName () : String = generateKeyForMultiple(targets.map { it.toString() })
     open fun getName() : String = "${notateKey()}$DIRECT_DEPEND${getTargetsName()}"
 }
-

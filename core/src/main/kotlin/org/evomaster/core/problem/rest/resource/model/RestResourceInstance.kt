@@ -1,22 +1,20 @@
 package org.evomaster.core.problem.rest.resource.model
 
 import org.evomaster.core.problem.rest.param.Param
-import org.evomaster.core.problem.rest.param.PathParam
-import org.evomaster.core.problem.rest.param.QueryParam
 
-class RestResourceInstance (val ar : RestResource, val params: List<Param>){
+class RestResourceInstance (val referResourceNode : RestResourceNode, val params: List<Param>){
 
-    fun equals(others : List<Param>) : Boolean{//FIXME
-        return ar.path.resolve(params) == ar.path.resolve(others)
+    fun equals(others : List<Param>) : Boolean{
+        return referResourceNode.path.resolve(params) == referResourceNode.path.resolve(others)
     }
 
     fun getKey() : String{
-        return "${ar.path.resolve(params)};${params.filter { it !is PathParam && it !is QueryParam}.sortedBy { it.name }.map { it.gene.getValueAsRawString() }.joinToString(",")}"
+        return referResourceNode.path.resolve(params)
     }
 
-    fun getAResourceKey() : String = ar.path.toString()
+    fun getAResourceKey() : String = referResourceNode.path.toString()
 
-    fun copy() : RestResourceInstance{//keep same ar, but copy new param
-        return RestResourceInstance(ar, params.map { param -> param.copy() })
+    fun copy() : RestResourceInstance{//keep same referResource, but copy new param
+        return RestResourceInstance(referResourceNode, params.map { param -> param.copy() })
     }
 }

@@ -31,7 +31,7 @@ class EnumGene<T>(
 
     override fun randomize(randomness: Randomness, forceNewValue: Boolean, allGenes: List<Gene>) {
 
-        val k = if (forceNewValue) {
+        val k = if (forceNewValue && values.size > 1) {
             randomness.nextInt(0, values.size - 1, index)
         } else {
             randomness.nextInt(0, values.size - 1)

@@ -3,17 +3,16 @@ package org.evomaster.core.problem.rest.resource.model.dependency
 import org.evomaster.client.java.controller.api.dto.database.execution.ExecutionDto
 import org.evomaster.core.problem.rest.param.BodyParam
 import org.evomaster.core.problem.rest.param.Param
-import org.evomaster.core.problem.rest.resource.db.SQLKey
-import org.evomaster.core.problem.rest.resource.parser.MatchedInfo
+import org.evomaster.core.problem.rest.resource.util.SQLKey
+import org.evomaster.core.problem.rest.resource.util.inference.model.MatchedInfo
 
-class ResourceRelatedToTable(
-        val key: String
-) {
+
+class ResourceRelatedToTable(val key: String) {
 
     companion object {
-        private const val FROM_DTO = "____FROM_DTO____"
+        private const val FROM_EVO_DTO = "____FROM_DTO____"
 
-        fun generateFromDtoMatchedInfo(table: String) : MatchedInfo = MatchedInfo(FROM_DTO, table, 1.0, -1, -1)
+        fun generateFromDtoMatchedInfo(table: String) : MatchedInfo = MatchedInfo(FROM_EVO_DTO, table, 1.0, -1, -1)
     }
     /**
      * key is table name
@@ -87,7 +86,7 @@ class ResourceRelatedToTable(
 
 
     fun findBestTableForParam(tables: Set<String>, simpleP2Table : SimpleParamRelatedToTable, onlyConfirmedColumn : Boolean = false) : Pair<Set<String>, Double>? {
-        val map = simpleP2Table.derivedMap.filter { tables.any { t-> t.toLowerCase() == it.key.toLowerCase() } }
+        val map = simpleP2Table.derivedMap.filter { tables.any { t-> t.equals(it.key, ignoreCase = true) } }
                 .map {
                     Pair(it.key, it.value.similarity)
                 }.toMap()
@@ -100,7 +99,7 @@ class ResourceRelatedToTable(
      * return Pair.first is name of table, Pair.second is column of Table
      */
     fun getSimpleParamToSpecifiedTable(table: String, simpleP2Table : SimpleParamRelatedToTable, onlyConfirmedColumn : Boolean = false) : Pair<String, String>? {
-        simpleP2Table.derivedMap.filter { table.toLowerCase()  == it.key.toLowerCase() }.let { map->
+        simpleP2Table.derivedMap.filter { table.equals(it.key, ignoreCase = true) }.let { map->
             if (map.isEmpty()) return null
             else return Pair(table, map.values.first().targetMatched)
         }
@@ -114,12 +113,12 @@ class ResourceRelatedToTable(
      */
     fun findBestTableForParam(tables: Set<String>, bodyP2Table : BodyParamRelatedToTable, onlyConfirmedColumn : Boolean = false) : MutableMap<String, Pair<Set<String>, Double>>?{
         val fmap = bodyP2Table.fieldsMap
-                .filter { it.value.derivedMap.any { m-> tables.any { t-> t == m.key.toLowerCase() } } }
+                .filter { it.value.derivedMap.any { m-> tables.any { t-> t.equals(m.key, ignoreCase = true) } } }
         if(fmap.isEmpty()) return null
 
         val result : MutableMap<String, Pair<Set<String>, Double>> = mutableMapOf()
         fmap.forEach { t, u ->
-            val related = u.derivedMap.filter { m-> tables.any { t-> t == m.key.toLowerCase() }}
+            val related = u.derivedMap.filter { m-> tables.any { t-> t.equals(m.key, ignoreCase = true) }}
             if (related.isNotEmpty()){
                 val best = related.map { it.value.similarity }.max()!!
                 result.put(t, Pair(related.filter { it.value.similarity == best }.keys, best))
@@ -249,5 +248,6 @@ class ParamFieldRelatedToTable(key: String) : ParamRelatedToTable(key){
         }
     }
 }
+
 
 

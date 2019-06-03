@@ -1,4 +1,4 @@
-package org.evomaster.core.problem.rest.resource.db
+package org.evomaster.core.problem.rest.resource.util
 
 import org.evomaster.core.database.schema.Column
 import org.evomaster.core.database.schema.ColumnDataType
@@ -41,7 +41,7 @@ class SQLGenerator{
 
             for(i in 0 until cols.size){
                 val col = table.columns.find { it.name == cols[i] }?:throw IllegalArgumentException("column ${cols[i]} can not be found in the table ${table.name}")
-                val condition =  genCondition(col, values[i])
+                val condition = genCondition(col, values[i])
                 if(condition.isNotBlank()) array.add(condition)
 
             }

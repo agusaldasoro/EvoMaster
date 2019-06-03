@@ -2,7 +2,8 @@ package org.evomaster.core.problem.rest.resource.service
 
 import com.google.inject.Inject
 import org.evomaster.core.EMConfig
-import org.evomaster.core.problem.rest.resource.model.RestResource
+import org.evomaster.core.problem.rest.resource.model.RestResourceNode
+import org.evomaster.core.problem.rest.resource.model.SamplerSpecification
 import org.evomaster.core.search.service.Randomness
 import org.evomaster.core.search.service.SearchTimeController
 import org.slf4j.Logger
@@ -32,7 +33,7 @@ class SmartSamplingController {
 
     }
 
-    private var selected : ResourceSamplingMethod? = null
+    //private var selected : ResourceSamplingMethod? = null
 
     fun initialize(){
         initApplicableStrategies()
@@ -57,7 +58,7 @@ class SmartSamplingController {
         println( ResourceSamplingMethod.values().filter{ it.applicable }.mapNotNull { "$it : ${it.probability}"}.joinToString (" - "))
     }
 
-    private fun printSummaryOfResources(mutableMap: Map<String, RestResource>){
+    private fun printSummaryOfResources(mutableMap: Map<String, RestResourceNode>){
         println("Summary of abstract resources and actions>>>")
         val message ="""
             #Rs ${mutableMap.size}
@@ -65,7 +66,7 @@ class SmartSamplingController {
             #hasIndActionRs ${mutableMap.values.filter { it.hasIndependentAction() }.size}
             #DepRs ${mutableMap.values.filterNot { it.isIndependent() }.size}
 
-            #Actions ${mutableMap.values.map { it.getMethods().size }.sum()}
+            #Actions ${mutableMap.values.map { it.actions.size }.sum()}
             #IndActions ${mutableMap.values.map { it.templates.filter { t -> t.value.independent }.size }.sum()}
             #depActions ${mutableMap.values.map { it.templates.filter { t -> !t.value.independent }.size}.sum()}
             #depComActions ${mutableMap.values.map { it.templates.filter { t -> !t.value.independent }.size * (it.templates.filter { !it.value.independent }.size -1) }.sum()}
@@ -119,7 +120,7 @@ class SmartSamplingController {
     }
 
     fun getSampleStrategy() : ResourceSamplingMethod{
-        selected =
+        val selected =
             when(config.resourceSampleStrategy){
                 EMConfig.ResourceSamplingStrategy.EqualProbability -> getStrategyWithItsProbability()
                 EMConfig.ResourceSamplingStrategy.Customized -> getStrategyWithItsProbability()
@@ -156,7 +157,7 @@ class SmartSamplingController {
     /**
      * probability is assigned based on percentage of actions that are dependent or independent regarding resources
      */
-    private fun initProbabilityWithActions(mutableMap: Map<String, RestResource>){
+    private fun initProbabilityWithActions(mutableMap: Map<String, RestResourceNode>){
         val numOfDepActions = mutableMap.values.map { it.numOfDepTemplate() }.sum()
         val num = mutableMap.values.map { it.numOfTemplates() }.sum()
         /**
@@ -276,35 +277,6 @@ class SmartSamplingController {
     }
 
     /**
-     * ResourceSamplingMethod presents detailed information about how to sample,
-     * including 1) [applicable] a set of applicable strategies; 2) [probability] a probability to select an applicable strategy; 3) [times] times to select an applicable strategy; and 4) [improved] times to help to improve Archive
-     *
-     * @property applicable presents whether a strategy is applicable for a system under test, e.g., if all resource of the SUT are independent, then only [S1iR] is applicable
-     * @property probability presents a probability to apply the strategy during sampling phase
-     * @property times presents how many times the strategy is applied
-     * @property improved presents how many times the strategy helps to improve Archive. Note that improved <= times
-     *
-     * */
-    enum class ResourceSamplingMethod (var applicable : Boolean = false, var probability : Double = 0.0, var times : Int = 0, var improved : Int = 0){
-        /**
-         * Sample 1 independent Resource, with an aim of exploiting diverse instances of resources
-         */
-        S1iR,
-        /**
-         * Sample 1 dependent Resource, with an aim of exploiting diverse instances of resources
-         */
-        S1dR,
-        /**
-         * Sample 2 dependent Resources, with an aim of exploiting diverse 1) relationship of resources, 2) instances of resources
-         */
-        S2dR,
-        /**
-         * Sample More than two Dependent Resources, with an aim of exploiting diverse 1) relationship of resources, 2) instances of resources
-         */
-        SMdR,
-    }
-
-    /**
      * An implementation of randomness with specified probability.
      * TODO It is required a further modification
      */
@@ -333,11 +305,40 @@ class SmartSamplingController {
         }
     }
 
-    fun reportImprovement(){
+    fun reportImprovement(samplerSpecification: SamplerSpecification){
         //it may be null when executing ad-hoc rest action
-        selected?.apply {
-            improved +=1
+        ResourceSamplingMethod.values().find { it.name == samplerSpecification.methodKey }?.let {
+            it.improved +=1
         }
     }
 
+}
+
+/**
+ * ResourceSamplingMethod presents detailed information about how to sample,
+ * including 1) [applicable] a set of applicable strategies; 2) [probability] a probability to select an applicable strategy; 3) [times] times to select an applicable strategy; and 4) [improved] times to help to improve Archive
+ *
+ * @property applicable presents whether a strategy is applicable for a system under test, e.g., if all resource of the SUT are independent, then only [S1iR] is applicable
+ * @property probability presents a probability to apply the strategy during sampling phase
+ * @property times presents how many times the strategy is applied
+ * @property improved presents how many times the strategy helps to improve Archive. Note that improved <= times
+ *
+ * */
+enum class ResourceSamplingMethod (var applicable : Boolean = false, var probability : Double = 0.0, var times : Int = 0, var improved : Int = 0){
+    /**
+     * Sample 1 independent Resource, with an aim of exploiting diverse instances of resources
+     */
+    S1iR,
+    /**
+     * Sample 1 dependent Resource, with an aim of exploiting diverse instances of resources
+     */
+    S1dR,
+    /**
+     * Sample 2 dependent Resources, with an aim of exploiting diverse 1) relationship of resources, 2) instances of resources
+     */
+    S2dR,
+    /**
+     * Sample More than two Dependent Resources, with an aim of exploiting diverse 1) relationship of resources, 2) instances of resources
+     */
+    SMdR,
 }

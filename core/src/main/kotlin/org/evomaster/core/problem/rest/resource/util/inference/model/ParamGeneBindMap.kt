@@ -1,8 +1,4 @@
-package org.evomaster.core.problem.rest.resource.binding
-
-import org.evomaster.core.problem.rest.param.Param
-import org.evomaster.core.search.gene.Gene
-
+package org.evomaster.core.problem.rest.resource.util.inference.model
 
 /**
  * [isElementOfParam] means the gene of Param is one type of ObjectGene, MapGene, ListGene

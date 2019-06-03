@@ -14,7 +14,6 @@ open class ResourceRelatedToResources(
     init {
         assert(path.isNotEmpty())
     }
-    //override fun getTargetsName () : String = generateKeyForMultiple(targets.map { (it as RestAResource).path.toString() })
 
 }
 /**
@@ -45,10 +44,6 @@ class MutualResourcesRelations(mutualResources: List<String>, probability: Doubl
         return "MutualRelations:${notateKey()}"
     }
 
-//    fun getRelatedTables() : Set<String>?{
-//        if(additionalInfo.isBlank()) return null
-//        return additionalInfo.split(TABLE_SEPARATOR).toHashSet()
-//    }
 
 }
 

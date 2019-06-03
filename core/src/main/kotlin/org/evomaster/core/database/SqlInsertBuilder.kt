@@ -10,11 +10,10 @@ import org.evomaster.core.database.schema.Column
 import org.evomaster.core.database.schema.ColumnDataType
 import org.evomaster.core.database.schema.ForeignKey
 import org.evomaster.core.database.schema.Table
-import org.evomaster.core.problem.rest.resource.db.SQLGenerator
-import org.evomaster.core.problem.rest.resource.db.SQLKey
+import org.evomaster.core.problem.rest.resource.util.SQLGenerator
+import org.evomaster.core.problem.rest.resource.util.SQLKey
 import org.evomaster.core.search.gene.Gene
 import org.evomaster.core.search.gene.ImmutableDataHolderGene
-import org.evomaster.core.search.gene.SqlAutoIncrementGene
 import org.evomaster.core.search.gene.SqlPrimaryKeyGene
 import org.evomaster.dbconstraint.*
 
@@ -457,7 +456,7 @@ class SqlInsertBuilder(
     /**
      * get existing pks in db
      */
-    fun extractExistingPKs(dataInDB : MutableMap<String, MutableList<DataRowDto>>, tablesMap : MutableMap<String, Table>? = null){
+    fun extractExistingPKs(dataInDB : MutableMap<String, MutableList<DataRowDto>>){
 
         if(dbExecutor == null){
             throw IllegalStateException("No Database Executor registered for this object")
@@ -481,6 +480,14 @@ class SqlInsertBuilder(
                     ?: continue
             dataInDB.getOrPut(table.name){ result.rows.map { it }.toMutableList()}
         }
+
+
+    }
+
+    /**
+     * get table info
+     */
+    fun extractExistingTables( tablesMap : MutableMap<String, Table>? = null){
 
         if(tablesMap!=null){
             tablesMap.clear()

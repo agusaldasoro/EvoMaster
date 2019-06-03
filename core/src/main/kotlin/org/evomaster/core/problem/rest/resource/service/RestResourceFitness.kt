@@ -6,8 +6,7 @@ import org.evomaster.core.database.DbAction
 import org.evomaster.core.database.DbActionTransformer
 import org.evomaster.core.problem.rest.RestAction
 import org.evomaster.core.problem.rest.RestCallAction
-import org.evomaster.core.problem.rest.SampleType
-import org.evomaster.core.problem.rest.resource.ResourceRestIndividual
+import org.evomaster.core.problem.rest.resource.model.RestResourceIndividual
 import org.evomaster.core.problem.rest.service.AbstractRestFitness
 import org.evomaster.core.remote.service.RemoteController
 import org.evomaster.core.search.ActionResult
@@ -17,30 +16,30 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
- * take care of calculating/collecting fitness of [ResourceRestIndividual]
+ * take care of calculating/collecting fitness of [RestResourceIndividual]
  */
-class ResourceRestFitness : AbstractRestFitness<ResourceRestIndividual>() {
+class RestResourceFitness : AbstractRestFitness<RestResourceIndividual>() {
 
     @Inject
     private lateinit var rc: RemoteController
 
     @Inject
-    private lateinit var sampler : ResourceRestSampler
+    private lateinit var sampler : RestResourceSampler
 
     @Inject
     private lateinit var rm: ResourceManageService
 
     @Inject
-    private lateinit var depAndDBManager: DependencyAndDBManager
+    private lateinit var dm: ResourceDepManageService
 
     companion object {
-        private val log: Logger = LoggerFactory.getLogger(ResourceRestFitness::class.java)
+        private val log: Logger = LoggerFactory.getLogger(RestResourceFitness::class.java)
     }
 
     /*
         add db check in term of each abstract resource
      */
-    override fun doCalculateCoverage(individual: ResourceRestIndividual): EvaluatedIndividual<ResourceRestIndividual>? {
+    override fun doCalculateCoverage(individual: RestResourceIndividual): EvaluatedIndividual<RestResourceIndividual>? {
 
         rc.resetSUT()
 
@@ -98,7 +97,7 @@ class ResourceRestFitness : AbstractRestFitness<ResourceRestIndividual>() {
             return null
         }
 
-        depAndDBManager.updateResourceTables(individual, dto)
+        dm.updateResourceTables(individual, dto)
 
         dto.targets.forEach { t ->
 
@@ -116,8 +115,8 @@ class ResourceRestFitness : AbstractRestFitness<ResourceRestIndividual>() {
         expandIndividual(individual, dto.additionalInfoList)
 
         return if(config.enableTrackEvaluatedIndividual)
-            EvaluatedIndividual(fv, individual.copy() as ResourceRestIndividual, actionResults, null, mutableListOf(), mutableListOf(), withImpacts = (config.probOfArchiveMutation > 0.0))
-        else EvaluatedIndividual(fv, individual.copy() as ResourceRestIndividual, actionResults, withImpacts = (config.probOfArchiveMutation > 0.0))
+            EvaluatedIndividual(fv, individual.copy() as RestResourceIndividual, actionResults, null, mutableListOf(), mutableListOf(), withImpacts = (config.probOfArchiveMutation > 0.0))
+        else EvaluatedIndividual(fv, individual.copy() as RestResourceIndividual, actionResults, withImpacts = (config.probOfArchiveMutation > 0.0))
 
         /*
             TODO when dealing with seeding, might want to extend EvaluatedIndividual
@@ -142,6 +141,7 @@ class ResourceRestFitness : AbstractRestFitness<ResourceRestIndividual>() {
         }
 
         val dto = DbActionTransformer.transform(allDbActions, previousDbAction)
+        dto.isFirst = previousDbAction.isEmpty()
 
         val ok = rc.executeDatabaseCommand(dto)
         if (!ok) {

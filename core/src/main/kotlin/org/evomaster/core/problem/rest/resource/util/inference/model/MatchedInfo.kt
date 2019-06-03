@@ -1,6 +1,6 @@
-package org.evomaster.core.problem.rest.resource.parser
+package org.evomaster.core.problem.rest.resource.util.inference.model
 
-import org.evomaster.core.problem.rest.resource.parser.ParserUtil
+import org.evomaster.core.problem.rest.resource.util.ParserUtil
 import kotlin.math.min
 
 open class MatchedInfo(val input : String, val targetMatched : String, var similarity : Double, var inputIndicator : Int = 0, var outputIndicator : Int = 0){

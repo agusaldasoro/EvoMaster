@@ -1,6 +1,7 @@
 package org.evomaster.core.problem.rest.resource.model.dependency
 
-import org.evomaster.core.search.Action
+import org.evomaster.core.database.DbAction
+import org.evomaster.core.problem.rest.RestCallAction
 
 /**
  * to present a chain of actions to create a resource with its dependent resource(s)
@@ -8,12 +9,11 @@ import org.evomaster.core.search.Action
  *                  If isComplete is FALSE, it means that actions for creating the resource or dependent resources cannot be found.
  * @property additionalInfo carries info about first resource that cannot be created if isComplete is FALSE, otherwise it is Blank.
  */
-open class CreationChain(
-        val actions: MutableList<Action>,
-        private var isComplete : Boolean,
-        var additionalInfo : String = "",
-        var type : CreationType = CreationType.NONE
+abstract class CreationChain(
+        private var isComplete : Boolean = false,
+        var additionalInfo : String = ""
 ){
+
     fun confirmComplete(){
         isComplete = true
     }
@@ -30,13 +30,8 @@ open class CreationChain(
     fun isComplete() :Boolean = isComplete
 }
 
-enum class CreationType{
-    NONE,
-    DB,
-    POST,
-    /**
-     * [MIXED] represents an option to include dbaction(s) and post action(s) to prepare required resources in a creation chain.
-     * In the chain, dbaction(s) is always in front of post action(s). it mostly exists when post action is incomplete.
-     */
-    MIXED
-}
+class PostCreationChain(val actions: MutableList<RestCallAction>) : CreationChain()
+
+class DBCreationChain(val actions: MutableList<DbAction>) : CreationChain()
+
+class CompositeCreationChain(val actions: MutableList<Any>) : CreationChain()
