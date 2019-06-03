@@ -1,11 +1,10 @@
 package org.evomaster.core.problem.rest.resource.util
 
 
-import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreAnnotations
 import edu.stanford.nlp.ling.CoreLabel
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import java.util.*
 import edu.stanford.nlp.ling.tokensregex.TokenSequencePattern
+import edu.stanford.nlp.pipeline.StanfordCoreNLP
 import org.evomaster.core.problem.rest.RestCallAction
 import org.evomaster.core.problem.rest.RestPath
 import org.evomaster.core.problem.rest.param.*
@@ -16,7 +15,7 @@ import org.evomaster.core.search.gene.DisruptiveGene
 import org.evomaster.core.search.gene.Gene
 import org.evomaster.core.search.gene.ObjectGene
 import org.evomaster.core.search.gene.OptionalGene
-import java.util.ArrayList
+import java.util.*
 
 class ParserUtil {
 
@@ -96,7 +95,7 @@ class ParserUtil {
         }
 
         fun parseAction(action: RestCallAction, description: String, map : MutableMap<String, ActionRToken>){
-            if(description != null)
+            if(description.isNotBlank())
                 parseActionTokensByDes(description, map)
             parseActionTokensByParam(action.parameters, map)
         }
@@ -253,7 +252,7 @@ class ParserUtil {
         fun stringSimilarityScore(str1 : String, str2 : String, algorithm : SimilarityAlgorithm =SimilarityAlgorithm.Trigrams): Double{
             return when(algorithm){
                 SimilarityAlgorithm.Trigrams -> trigrams(bigram(str1.toLowerCase()), bigram(str2.toLowerCase()))
-                else-> 0.0
+                //else-> 0.0
             }
         }
 

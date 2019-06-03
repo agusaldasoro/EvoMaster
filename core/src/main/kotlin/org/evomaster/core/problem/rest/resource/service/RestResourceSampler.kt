@@ -8,12 +8,15 @@ import org.evomaster.core.EMConfig
 import org.evomaster.core.database.DbAction
 import org.evomaster.core.database.SqlInsertBuilder
 import org.evomaster.core.output.OutputFormat
-import org.evomaster.core.problem.rest.*
+import org.evomaster.core.problem.rest.RestAction
+import org.evomaster.core.problem.rest.RestActionBuilder
+import org.evomaster.core.problem.rest.RestCallAction
+import org.evomaster.core.problem.rest.SampleType
 import org.evomaster.core.problem.rest.auth.AuthenticationHeader
 import org.evomaster.core.problem.rest.auth.AuthenticationInfo
 import org.evomaster.core.problem.rest.auth.NoAuth
-import org.evomaster.core.problem.rest.resource.model.RestResourceIndividual
 import org.evomaster.core.problem.rest.resource.model.RestResourceCalls
+import org.evomaster.core.problem.rest.resource.model.RestResourceIndividual
 import org.evomaster.core.problem.rest.resource.model.SamplerSpecification
 import org.evomaster.core.problem.rest.service.RestSampler
 import org.evomaster.core.remote.SutProblemException
@@ -148,7 +151,7 @@ class RestResourceSampler : Sampler<RestResourceIndividual>() {
 
     private fun getSwagger(infoDto: SutInfoDto): Swagger {
 
-        val swaggerURL = infoDto?.restProblem?.swaggerJsonUrl ?: throw IllegalStateException("Missing information about the Swagger URL")
+        val swaggerURL = infoDto.restProblem?.swaggerJsonUrl ?: throw IllegalStateException("Missing information about the Swagger URL")
 
         val response = connectToSwagger(swaggerURL, 30)
 
@@ -376,7 +379,7 @@ class RestResourceSampler : Sampler<RestResourceIndividual>() {
         actions
                 .filter {
                     a -> (a is RestCallAction) && actions.find { ia -> (ia is RestCallAction) && a.path.toString() != ia.path.toString() &&a.path.isAncestorOf(ia.path) } == null
-                }!!
+                }
                 .map {
                     a -> (a as RestCallAction).path.toString()
                 }.toHashSet()

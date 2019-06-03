@@ -10,7 +10,6 @@ import org.evomaster.core.search.gene.Gene
 import org.evomaster.core.search.gene.GeneUtils
 import org.evomaster.core.search.service.Randomness
 import org.evomaster.core.search.tracer.TrackOperator
-import java.lang.IllegalArgumentException
 
 class RestResourceIndividual (
         private val resourceCalls: MutableList<RestResourceCalls>,
@@ -37,7 +36,7 @@ class RestResourceIndividual (
                 sampleType == SampleType.SMART_RESOURCE
     }
 
-    override fun seeActions(): List<out Action> = resourceCalls.flatMap { it.actions }
+    override fun seeActions(): List<Action> = resourceCalls.flatMap { it.actions }
 
     fun removeResourceCall(position : Int) {
         if(position >= resourceCalls.size)
@@ -101,7 +100,7 @@ class RestResourceIndividual (
 
     fun getResourceCalls() : List<RestResourceCalls> = resourceCalls.toList()
 
-    override fun seeGenes(filter: GeneFilter): List<out Gene> {
+    override fun seeGenes(filter: GeneFilter): List<Gene> {
         return when (filter) {
             GeneFilter.ALL -> dbInitialization.flatMap(DbAction::seeGenes).plus(seeActions().flatMap(Action::seeGenes))
             GeneFilter.NO_SQL -> seeActions().flatMap(Action::seeGenes)

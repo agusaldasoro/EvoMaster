@@ -3,8 +3,8 @@ package org.evomaster.core.problem.rest.resource.service
 import com.google.inject.Inject
 import org.evomaster.core.problem.rest.RestCallAction
 import org.evomaster.core.problem.rest.auth.AuthenticationInfo
-import org.evomaster.core.problem.rest.resource.model.RestResourceIndividual
 import org.evomaster.core.problem.rest.resource.model.RestResourceCalls
+import org.evomaster.core.problem.rest.resource.model.RestResourceIndividual
 import org.evomaster.core.search.EvaluatedIndividual
 import org.evomaster.core.search.Individual
 import org.evomaster.core.search.service.mutator.StructureMutator
@@ -216,7 +216,7 @@ class RestResourceStructureMutator : StructureMutator() {
         }
 
         maintainAuth(auth, call!!)
-        ind.addResourceCall(pos, call!!)
+        ind.addResourceCall(pos, call)
     }
 
     /**
@@ -237,7 +237,6 @@ class RestResourceStructureMutator : StructureMutator() {
         if(new == null){
             new = old.getResourceNode().sampleOneAction(null, randomness, max)
         }
-        assert(new != null)
         maintainAuth(auth, new)
         ind.replaceResourceCall(pos, new)
     }

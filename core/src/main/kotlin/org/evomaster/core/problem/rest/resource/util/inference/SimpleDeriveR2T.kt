@@ -2,7 +2,6 @@ package org.evomaster.core.problem.rest.resource.util.inference
 
 import org.evomaster.core.database.DbAction
 import org.evomaster.core.database.schema.Table
-import org.evomaster.core.problem.rest.HttpVerb
 import org.evomaster.core.problem.rest.RestAction
 import org.evomaster.core.problem.rest.RestCallAction
 import org.evomaster.core.problem.rest.param.BodyParam
@@ -92,7 +91,7 @@ class SimpleDeriveResourceBinding : DeriveResourceBinding{
         var created = false
         if(isBodyParam){
             var tables = if((paramInfo.referParam.gene as ObjectGene).refType != null){
-                r.resourceToTable.derivedMap.filter { it.value.any { m-> m.input == (paramInfo.referParam.gene as ObjectGene).refType} }.keys.toHashSet()
+                r.resourceToTable.derivedMap.filter { it.value.any { m-> m.input == (paramInfo.referParam.gene).refType} }.keys.toHashSet()
             } else null
 
             if(tables == null || tables.isEmpty()) tables = relatedTables

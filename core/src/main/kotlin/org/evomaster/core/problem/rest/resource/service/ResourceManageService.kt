@@ -15,7 +15,10 @@ import org.evomaster.core.problem.rest.auth.AuthenticationInfo
 import org.evomaster.core.problem.rest.resource.model.*
 import org.evomaster.core.problem.rest.resource.util.RestResourceTemplateHandler
 import org.evomaster.core.search.Action
-import org.evomaster.core.search.gene.*
+import org.evomaster.core.search.gene.GeneUtils
+import org.evomaster.core.search.gene.ImmutableDataHolderGene
+import org.evomaster.core.search.gene.SqlForeignKeyGene
+import org.evomaster.core.search.gene.SqlPrimaryKeyGene
 import org.evomaster.core.search.service.Randomness
 import org.evomaster.core.search.service.Sampler
 import org.slf4j.Logger
@@ -307,10 +310,8 @@ class ResourceManageService {
 
             shrinkDbActions(relatedTables, dbActions)
 
-            paramToTables.values.forEach { ps ->
-                //dm.bindCallActionsWithDBAction(ps.toHashSet().toList(), call, dbActions)
-                dm.bindCallWithDBAction(call,dbActions, paramToTables)
-            }
+            dm.bindCallWithDBAction(call,dbActions, paramToTables)
+
             call.dbActions.addAll(dbActions)
         }
         return paramToTables.isNotEmpty() && !failToGenDb

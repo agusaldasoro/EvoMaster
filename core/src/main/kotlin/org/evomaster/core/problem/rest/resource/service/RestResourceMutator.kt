@@ -3,7 +3,7 @@ package org.evomaster.core.problem.rest.resource.service
 import com.google.inject.Inject
 import org.evomaster.core.problem.rest.resource.model.RestResourceIndividual
 import org.evomaster.core.search.EvaluatedIndividual
-import org.evomaster.core.search.gene.*
+import org.evomaster.core.search.gene.Gene
 import org.evomaster.core.search.service.Archive
 import org.evomaster.core.search.service.mutator.StandardMutator
 

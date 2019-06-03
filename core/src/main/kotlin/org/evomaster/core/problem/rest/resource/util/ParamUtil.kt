@@ -7,7 +7,6 @@ import org.evomaster.core.problem.rest.resource.util.inference.model.MatchedInfo
 import org.evomaster.core.search.gene.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.IllegalArgumentException
 
 class ParamUtil {
 
@@ -46,10 +45,10 @@ class ParamUtil {
         }
         private fun bindPathParm(p : PathParam, targetPath: RestPath, sourcePath: RestPath, params: List<Param>, inner : Boolean){
             val k = params.find { pa -> pa is PathParam && pa.name == p.name }
-            if(k != null) p.gene.copyValueFrom(k!!.gene)
+            if(k != null) p.gene.copyValueFrom(k.gene)
             else{
                 if(numOfBodyParam(params) == params.size && params.isNotEmpty()){
-                    bindBodyAndOther(params.first{ pa -> pa is BodyParam }!! as BodyParam, sourcePath, p, targetPath,false, inner)
+                    bindBodyAndOther(params.first{ pa -> pa is BodyParam } as BodyParam, sourcePath, p, targetPath,false, inner)
                 }
 //                else
 //                    log.warn("cannot find PathParam ${p.name} in params ${params.mapNotNull { it.name }.joinToString(" ")}")
@@ -58,7 +57,7 @@ class ParamUtil {
 
         private fun bindQueryParm(p : QueryParam, targetPath: RestPath, sourcePath: RestPath, params: List<Param>, inner : Boolean){
             if(params.isNotEmpty() && numOfBodyParam(params) == params.size){
-                bindBodyAndOther(params.first{ pa -> pa is BodyParam }!! as BodyParam, sourcePath, p, targetPath,false, inner)
+                bindBodyAndOther(params.first{ pa -> pa is BodyParam } as BodyParam, sourcePath, p, targetPath,false, inner)
             }else{
                 val sg = params.filter { pa -> !(pa is BodyParam) }.find { pa -> pa.name == p.name
                         //&& p.gene::class.java.simpleName == pa.gene::class.java.simpleName
@@ -130,10 +129,10 @@ class ParamUtil {
         }
 
         private fun numOfBodyParam(params: List<Param>) : Int{
-            params.filter { it is BodyParam }?.let {
+            params.filter { it is BodyParam }.let {
                 return it.size
             }
-            return 0
+            //return 0
         }
 
         fun existBodyParam(params: List<Param>) : Boolean{
@@ -378,15 +377,15 @@ class ParamUtil {
          * @param enableFlexibleBind whether to enable flexible bind, which can only be enabled when [existingData] is false
          */
         fun bindParamWithDbAction(dbgene: Gene, paramGene: Gene, existingData: Boolean, enableFlexibleBind : Boolean = true){
-            if(dbgene!! is SqlPrimaryKeyGene || dbgene!! is SqlForeignKeyGene || dbgene!! is SqlAutoIncrementGene){
+            if(dbgene is SqlPrimaryKeyGene || dbgene is SqlForeignKeyGene || dbgene is SqlAutoIncrementGene){
                 /*
                     if gene of dbaction is PK, FK or AutoIncrementGene,
                         bind gene of Param according to the gene from dbaction
                  */
-                copyGene(b=getValueGene(dbgene!!), g=getValueGene(paramGene), b2g=false)
+                copyGene(b=getValueGene(dbgene), g=getValueGene(paramGene), b2g=false)
             }else{
                 val db2Action = !existingData && (!enableFlexibleBind || checkBindSequence(getValueGene(dbgene), getValueGene(paramGene))?:true)
-                copyGene(b=getValueGene(dbgene!!), g=getValueGene(paramGene), b2g=db2Action)
+                copyGene(b=getValueGene(dbgene), g=getValueGene(paramGene), b2g=db2Action)
 //                if(existingData){
 //                    /*
 //                     If the data is existing in db, bind gene of Param according to the gene from dbaction
@@ -446,18 +445,18 @@ class ParamUtil {
             }
 
             if(gene != null){
-                if(gene!! is SqlPrimaryKeyGene || gene!! is SqlForeignKeyGene || gene!! is SqlAutoIncrementGene){
+                if(gene is SqlPrimaryKeyGene || gene is SqlForeignKeyGene || gene is SqlAutoIncrementGene){
                     /*
                         if gene of dbaction is PK, FK or AutoIncrementGene,
                             bind gene of Param according to the gene from dbaction
                      */
-                    copyGene(getValueGene(gene!!), getValueGene(param.gene), false)
+                    copyGene(getValueGene(gene), getValueGene(param.gene), false)
                 }else{
                     /*
                         If the data is existing in db, bind gene of Param according to the gene from dbaction
                         otherwise, bind gene of action according to rest action, i.e., Gene of Param
                      */
-                    copyGene(getValueGene(gene!!), getValueGene(param.gene), !existingData)
+                    copyGene(getValueGene(gene), getValueGene(param.gene), !existingData)
                 }
 
                 return true

@@ -10,16 +10,19 @@ import org.evomaster.core.problem.rest.HttpVerb
 import org.evomaster.core.problem.rest.RestAction
 import org.evomaster.core.problem.rest.RestCallAction
 import org.evomaster.core.problem.rest.param.BodyParam
-import org.evomaster.core.problem.rest.resource.model.RestResourceIndividual
 import org.evomaster.core.problem.rest.resource.model.RestResourceCalls
+import org.evomaster.core.problem.rest.resource.model.RestResourceIndividual
 import org.evomaster.core.problem.rest.resource.model.RestResourceNode
-import org.evomaster.core.problem.rest.resource.model.dependency.*
+import org.evomaster.core.problem.rest.resource.model.dependency.MutualResourcesRelations
+import org.evomaster.core.problem.rest.resource.model.dependency.ResourceRelatedToResources
+import org.evomaster.core.problem.rest.resource.model.dependency.ResourceRelatedToTable
+import org.evomaster.core.problem.rest.resource.model.dependency.SelfResourcesRelation
 import org.evomaster.core.problem.rest.resource.util.ParamUtil
 import org.evomaster.core.problem.rest.resource.util.ParserUtil
 import org.evomaster.core.problem.rest.resource.util.inference.SimpleDeriveResourceBinding
 import org.evomaster.core.problem.rest.resource.util.inference.model.ParamGeneBindMap
 import org.evomaster.core.search.EvaluatedIndividual
-import org.evomaster.core.search.gene.*
+import org.evomaster.core.search.gene.ObjectGene
 import org.evomaster.core.search.service.Randomness
 import kotlin.math.max
 
@@ -148,7 +151,7 @@ class ResourceDepManageService {
 
     private fun updateResourceToTable(action: RestCallAction, updated: Map<String, MutableSet<String>>, matchedWithVerb : Boolean, tables : Map<String, Table>,
                                       addedMap: MutableMap<String, MutableSet<String>>, removedMap: MutableMap<String, MutableSet<String>>){
-        val ar = rm.getResourceNodeFromCluster(action.path.toString())!!
+        val ar = rm.getResourceNodeFromCluster(action.path.toString())
         val rToTable = ar.resourceToTable
 
         if(updated.isNotEmpty() && matchedWithVerb){
@@ -231,7 +234,7 @@ class ResourceDepManageService {
             updateResourceToTable(action, get, (action.verb == HttpVerb.PATCH || action.verb == HttpVerb.PUT),tables, addedMap, removedMap)
         }
 
-        rm.getResourceNodeFromCluster(action.path.toString())!!.resourceToTable.updateActionRelatedToTable(action.verb.toString(), dto, tables.keys)
+        rm.getResourceNodeFromCluster(action.path.toString()).resourceToTable.updateActionRelatedToTable(action.verb.toString(), dto, tables.keys)
     }
 
     /************************  derive dependency using parser ***********************************/
@@ -268,7 +271,7 @@ class ResourceDepManageService {
                     /*
                      TODO Man should only apply on POST Action? how about others?
                      */
-                    val post = r.actions.first { it is RestCallAction && it.verb == HttpVerb.POST }!! as RestCallAction
+                    val post = r.actions.first { it is RestCallAction && it.verb == HttpVerb.POST } as RestCallAction
                     post.tokens.forEach { _, u ->
                         resourceCluster.forEach { or ->
                             if(or != r){
@@ -548,7 +551,7 @@ class ResourceDepManageService {
 
                 if(isAnyChange){
                     val seqKey = seqCur[indexOfCalls].getResourceNodeKey()
-                    updateDependencies(seqKey, mutableListOf(modified!!.getResourceNodeKey() ), RestResourceStructureMutator.MutationType.MODIFY.toString())
+                    updateDependencies(seqKey, mutableListOf(modified.getResourceNodeKey() ), RestResourceStructureMutator.MutationType.MODIFY.toString())
                 }
             }
         }
@@ -566,8 +569,8 @@ class ResourceDepManageService {
 
         val mutatedIndex = (0 until seqCur.size).find { seqCur[it].resourceInstance.getKey() != seqPre[it].resourceInstance.getKey() }!!
 
-        val replaced = seqCur[mutatedIndex]!!
-        val replace = seqPre[mutatedIndex]!!
+        val replaced = seqCur[mutatedIndex]
+        val replace = seqPre[mutatedIndex]
 
         if(isBetter != 0){
             val locOfReplaced = seqCur.indexOf(replaced)
@@ -638,9 +641,9 @@ class ResourceDepManageService {
              if C is better, C rely on H; else if C is worse, C rely on H ? ;else C may not rely on H
         */
         val added = seqCur.find { cur -> seqPre.find { pre-> pre.resourceInstance.getKey() == cur.resourceInstance.getKey() } == null }?: return
-        val addedKey = added!!.getResourceNodeKey()
+        val addedKey = added.getResourceNodeKey()
 
-        val locOfAdded = seqCur.indexOf(added!!)
+        val locOfAdded = seqCur.indexOf(added)
 
         if(isBetter != 0){
             var actionIndex = seqCur.mapIndexed { index, restResourceCalls ->
@@ -648,7 +651,7 @@ class ResourceDepManageService {
                 else 0
             }.sum()
 
-            val distance = added!!.actions.size
+            val distance = added.actions.size
 
             (locOfAdded+1 until seqCur.size).forEach { indexOfCalls ->
                 var isAnyChange = false
@@ -697,9 +700,9 @@ class ResourceDepManageService {
          when comparing B*, B* probability achieves better performance by taking target from previous first B, so we need to compare with merged targets, i.e., B and B*.
         */
         val delete = seqPre.find { pre -> seqCur.find { cur-> pre.resourceInstance.getKey() == cur.resourceInstance.getKey() } == null }?:return
-        val deleteKey = delete!!.getResourceNodeKey()
+        val deleteKey = delete.getResourceNodeKey()
 
-        val locOfDelete = seqPre.indexOf(delete!!)
+        val locOfDelete = seqPre.indexOf(delete)
 
         if(isBetter != 0){
 
@@ -708,7 +711,7 @@ class ResourceDepManageService {
                 else 0
             }.sum()
 
-            val distance = 0 - delete!!.actions.size
+            val distance = 0 - delete.actions.size
 
             (locOfDelete until seqCur.size).forEach { indexOfCalls ->
                 var isAnyChange = false
@@ -836,7 +839,7 @@ class ResourceDepManageService {
                 dep-> if(dep !is SelfResourcesRelation) dep.targets.filter {  !existingRs.contains(it) } else if(randomness.nextBoolean(0.2)) dep.targets else mutableListOf()
             }.let { templates->
                 if(templates.isNotEmpty()){
-                    rm.getResourceNodeFromCluster(randomness.choose(templates) as String).sampleAnyRestResourceCalls(randomness,maxTestSize )?.let { second->
+                    rm.getResourceNodeFromCluster(randomness.choose(templates) as String).sampleAnyRestResourceCalls(randomness,maxTestSize ).let { second->
                         return Pair(first, second)
                     }
                 }
@@ -852,7 +855,7 @@ class ResourceDepManageService {
 
         rm.getResourceCluster().keys.filter { !checked.contains(it) }.let { templates->
             if(templates.isNotEmpty()){
-                rm.getResourceNodeFromCluster(randomness.choose(templates)).sampleAnyRestResourceCalls(randomness,maxTestSize )?.let { second->
+                rm.getResourceNodeFromCluster(randomness.choose(templates)).sampleAnyRestResourceCalls(randomness,maxTestSize ).let { second->
                     return Pair(null, second)
                 }
             }
@@ -986,7 +989,7 @@ class ResourceDepManageService {
         }
     }
 
-    fun extractRelatedTablesForCall(call: RestResourceCalls, dbActions: MutableList<DbAction> = mutableListOf()) = inference.generateRelatedTables(call, dbActions)!!
+    fun extractRelatedTablesForCall(call: RestResourceCalls, dbActions: MutableList<DbAction> = mutableListOf()) = inference.generateRelatedTables(call, dbActions)
 
     fun bindCallWithDBAction(
             call: RestResourceCalls,
@@ -1006,19 +1009,17 @@ class ResourceDepManageService {
                     list.forEach { pToGene->
                         var dbAction = dbActions.find { it.table.name.toLowerCase() == pToGene.tableName.toLowerCase() }
                                 ?: throw IllegalArgumentException("cannot find ${pToGene.tableName} in db actions ${dbActions.map { it.table.name }.joinToString(";")}")
-                        var columngene = dbAction?.seeGenes().first { g-> g.name.toLowerCase() == pToGene.column.toLowerCase() }
-                        if(dbAction!= null && columngene!=null){
-                            val param = a.parameters.find { p-> rm.getResourceCluster()[a.path.toString()]!!.getParamId(a.parameters, p).toLowerCase() == pToGene.paramId.toLowerCase() }
-                            param?.let {
-                                if(pToGene.isElementOfParam){
-                                    if(param is BodyParam && param.gene is ObjectGene){
-                                        param.gene.fields.find { f-> f.name == pToGene.targetToBind }?.let { paramGene->
-                                            ParamUtil.bindParamWithDbAction(columngene, paramGene, forceBindParamBasedOnDB || dbAction.representExistingData)
-                                        }
+                        var columngene = dbAction.seeGenes().first { g-> g.name.toLowerCase() == pToGene.column.toLowerCase() }
+                        val param = a.parameters.find { p-> rm.getResourceCluster()[a.path.toString()]!!.getParamId(a.parameters, p).toLowerCase() == pToGene.paramId.toLowerCase() }
+                        param?.let {
+                            if(pToGene.isElementOfParam){
+                                if(param is BodyParam && param.gene is ObjectGene){
+                                    param.gene.fields.find { f-> f.name == pToGene.targetToBind }?.let { paramGene->
+                                        ParamUtil.bindParamWithDbAction(columngene, paramGene, forceBindParamBasedOnDB || dbAction.representExistingData)
                                     }
-                                }else{
-                                    ParamUtil.bindParamWithDbAction(columngene, param.gene, forceBindParamBasedOnDB || dbAction.representExistingData)
                                 }
+                            }else{
+                                ParamUtil.bindParamWithDbAction(columngene, param.gene, forceBindParamBasedOnDB || dbAction.representExistingData)
                             }
                         }
 
@@ -1053,7 +1054,7 @@ class ResourceDepManageService {
         }
 
         val dbActions = dbActions.plus(call.dbActions).toMutableList()
-        inference.generateRelatedTables(call, dbActions)?.let {
+        inference.generateRelatedTables(call, dbActions).let {
             bindCallWithDBAction(call, dbActions, it, forceBindParamBasedOnDB = true)
         }
 

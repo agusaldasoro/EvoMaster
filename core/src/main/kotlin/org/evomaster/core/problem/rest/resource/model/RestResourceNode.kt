@@ -1,22 +1,22 @@
 package org.evomaster.core.problem.rest.resource.model
 
 import org.evomaster.core.database.DbAction
-import org.evomaster.core.problem.rest.*
+import org.evomaster.core.problem.rest.HttpVerb
+import org.evomaster.core.problem.rest.RestAction
+import org.evomaster.core.problem.rest.RestCallAction
+import org.evomaster.core.problem.rest.RestPath
 import org.evomaster.core.problem.rest.param.BodyParam
 import org.evomaster.core.problem.rest.param.Param
 import org.evomaster.core.problem.rest.param.PathParam
-import org.evomaster.core.problem.rest.param.QueryParam
 import org.evomaster.core.problem.rest.resource.model.dependency.*
 import org.evomaster.core.problem.rest.resource.util.ParamUtil
 import org.evomaster.core.problem.rest.resource.util.ParserUtil
 import org.evomaster.core.problem.rest.resource.util.RestResourceTemplateHandler
 import org.evomaster.core.search.Action
 import org.evomaster.core.search.gene.ObjectGene
-import org.evomaster.core.search.gene.OptionalGene
 import org.evomaster.core.search.service.Randomness
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import javax.swing.text.Segment
 
 /**
  * @property path resource path
@@ -143,7 +143,7 @@ class RestResourceNode(
 
         if(post != null){
             postCreation.actions.add(0, post)
-            if ((post as RestCallAction).path.hasVariablePathParameters() &&
+            if ((post).path.hasVariablePathParameters() &&
                     (!post.path.isLastElementAParameter()) ||
                     post.path.getVariableNames().size >= 2) {
                 nextCreationPoints(post.path, postCreation)
@@ -421,11 +421,10 @@ class RestResourceNode(
         if(result.size > 1)
             result.filterNot { ac -> skipBind.contains(ac) }.forEach { ac ->
                 if((ac as RestCallAction).parameters.isNotEmpty()){
-                    ac.bindToSamePathResolution(ac.path, resource!!.params)
+                    ac.bindToSamePathResolution(ac.path, resource.params)
                 }
             }
 
-        assert(resource!=null)
         assert(result.isNotEmpty())
 
         if(additionalPatch && randomness.nextBoolean(PROB_EXTRA_PATCH) &&!templates.getValue(template).independent && template.contains(HttpVerb.PATCH.toString()) && result.size + 1 <= maxTestSize){
@@ -433,7 +432,7 @@ class RestResourceNode(
             val copy = result.get(index).copy() as RestAction
             result.add(index, copy)
         }
-        val calls = RestResourceCalls(templates[template]!!, resource!!, result)
+        val calls = RestResourceCalls(templates[template]!!, resource, result)
 
         when(isCreated){
             1 ->{
@@ -505,7 +504,7 @@ class RestResourceNode(
             ancestors.find { it.path.toString() == path.toString() }
         }
         ar?.let{
-            val others = hasWithVerbs(it.ancestors.flatMap { it.actions }.filter { it is RestCallAction } as List<RestCallAction>, verbs)
+            val others = hasWithVerbs(it.ancestors.flatMap { it.actions }.filterIsInstance<RestCallAction>(), verbs)
             if(others.isEmpty()) return null
             return chooseLongestPath(others)
         }
@@ -519,10 +518,10 @@ class RestResourceNode(
     }
 
     private fun sameOrAncestorEndpoints(target: RestCallAction): List<RestCallAction> {
-        if(target.path.toString() == this.path.toString()) return ancestors.flatMap { a -> a.actions }.plus(actions) as List<RestCallAction>
+        if(target.path.toString() == this.path.toString()) return ancestors.flatMap { a -> a.actions }.plus(actions).filterIsInstance<RestCallAction>()
         else {
             ancestors.find { it.path.toString() == target.path.toString() }?.let {
-                return it.ancestors.flatMap { a -> a.actions }.plus(it.actions) as List<RestCallAction>
+                return it.ancestors.flatMap { a -> a.actions }.plus(it.actions).filterIsInstance<RestCallAction>()
             }
         }
         return mutableListOf()
@@ -706,7 +705,7 @@ class RestResourceNode(
     }
 
     fun updateAdditionalParams(action: RestCallAction) : Map<String, ParamInfo>?{
-        val target = (actions.find { it is RestCallAction && it.getName() == action.getName() }
+        (actions.find { it is RestCallAction && it.getName() == action.getName() }
                 ?: throw IllegalArgumentException("cannot find the action ${action.getName()} in the resource ${getName()}")) as RestCallAction
 
         val additionParams = action.parameters.filter { p-> paramsInfo[getParamId(action.parameters, p)] == null}

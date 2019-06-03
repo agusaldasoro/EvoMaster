@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import org.evomaster.core.EMConfig
 import org.evomaster.core.problem.rest.resource.model.RestResourceNode
 import org.evomaster.core.problem.rest.resource.model.SamplerSpecification
+import org.evomaster.core.problem.rest.resource.service.ResourceSamplingMethod.S1iR
 import org.evomaster.core.search.service.Randomness
 import org.evomaster.core.search.service.SearchTimeController
 import org.slf4j.Logger
@@ -43,7 +44,7 @@ class SmartSamplingController {
 
     private fun initApplicableStrategies(){
         ResourceSamplingMethod.S1iR.applicable = true //mutableMap.values.filter { r -> r.hasIndependentAction }.isNotEmpty()
-        rm.getResourceCluster().values.filter { r -> !r.isIndependent() }?.let {
+        rm.getResourceCluster().values.filter { r -> !r.isIndependent() }.let {
             ResourceSamplingMethod.S1dR.applicable = it.isNotEmpty()
             ResourceSamplingMethod.S2dR.applicable = it.size > 1
             ResourceSamplingMethod.SMdR.applicable = it.size > 2
@@ -88,6 +89,9 @@ class SmartSamplingController {
             EMConfig.ResourceSamplingStrategy.TimeBudgets -> initEqualProbability()
             EMConfig.ResourceSamplingStrategy.Archive -> initEqualProbability()
             EMConfig.ResourceSamplingStrategy.ConArchive -> initEqualProbability()
+            else->{
+                throw IllegalArgumentException("wrong invocation of SmartSamplingController!")
+            }
         }
         printApplicableStr()
         update()

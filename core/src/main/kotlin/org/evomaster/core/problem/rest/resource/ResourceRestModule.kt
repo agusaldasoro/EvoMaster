@@ -9,8 +9,8 @@ import org.evomaster.core.remote.service.RemoteController
 import org.evomaster.core.search.service.Archive
 import org.evomaster.core.search.service.FitnessFunction
 import org.evomaster.core.search.service.Sampler
-import org.evomaster.core.search.service.mutator.StandardMutator
 import org.evomaster.core.search.service.mutator.Mutator
+import org.evomaster.core.search.service.mutator.StandardMutator
 import org.evomaster.core.search.service.mutator.StructureMutator
 
 
