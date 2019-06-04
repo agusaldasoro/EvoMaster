@@ -81,7 +81,7 @@ class SmartSamplingController {
     }
 
     private fun initProbability(){
-        printSummaryOfResources(rm.getResourceCluster())
+        //printSummaryOfResources(rm.getResourceCluster())
         when(config.resourceSampleStrategy){
             EMConfig.ResourceSamplingStrategy.EqualProbability -> initEqualProbability()
             EMConfig.ResourceSamplingStrategy.Customized -> initProbabilityWithSpecified()
@@ -93,7 +93,7 @@ class SmartSamplingController {
                 throw IllegalArgumentException("wrong invocation of SmartSamplingController!")
             }
         }
-        printApplicableStr()
+        //printApplicableStr()
         update()
     }
 

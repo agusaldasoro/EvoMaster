@@ -170,11 +170,11 @@ class ResourceManageService {
         assert(!ar.isIndependent())
         var candidateForInsertion : String? = null
 
-//        if(hasDBHandler() && ar.resourceToTable.paramToTable.isNotEmpty() && (if(forceInsert) forceInsert else randomness.nextBoolean(0.5))){
-//            //Insert - GET/PUT/PATCH
-//            val candidates = ar.templates.filter { it.value.independent }
-//            candidateForInsertion = if(candidates.isNotEmpty()) randomness.choose(candidates.keys) else null
-//        }
+        if(hasDBHandler() && ar.resourceToTable.paramToTable.isNotEmpty() && (if(forceInsert) forceInsert else randomness.nextBoolean(0.5))){
+            //Insert - GET/PUT/PATCH
+            val candidates = ar.templates.filter { it.value.independent }
+            candidateForInsertion = if(candidates.isNotEmpty()) randomness.choose(candidates.keys) else null
+        }
 
 
         val candidate = if(candidateForInsertion.isNullOrBlank()) {

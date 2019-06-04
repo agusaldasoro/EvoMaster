@@ -156,7 +156,7 @@ class ResourceDepManageService {
 
         if(updated.isNotEmpty() && matchedWithVerb){
 
-            if(action.verb != HttpVerb.GET){
+//            if(action.verb != HttpVerb.GET){
                 val derivedTables = rToTable.getTablesInDerivedMap()
 
                 updated.forEach { t, u ->
@@ -197,17 +197,18 @@ class ResourceDepManageService {
                     rToTable.confirmedSet.getOrPut(t){true}
                     rToTable.confirmedSet[t] = true
                 }
-            }else{
-                val derivedTables = rToTable.getTablesInDerivedMap()
-                updated.forEach { t, u ->
-                    if(derivedTables.any { it.equals(t, ignoreCase = true) }){
-                        rToTable.confirmedSet.getOrPut(t){true}
-                        rToTable.confirmedSet[t] = true
-                    }else{
-                        rToTable.confirmedSet.getOrPut(t){false}
-                    }
-                }
-            }
+//            }
+//            else{
+//                val derivedTables = rToTable.getTablesInDerivedMap()
+//                updated.forEach { t, u ->
+//                    if(derivedTables.any { it.equals(t, ignoreCase = true) }){
+//                        rToTable.confirmedSet.getOrPut(t){true}
+//                        rToTable.confirmedSet[t] = true
+//                    }else{
+//                        rToTable.confirmedSet.getOrPut(t){false}
+//                    }
+//                }
+//            }
         }else{
             updated.keys.forEach { t ->
                 rToTable.confirmedSet.getOrPut(t){false}

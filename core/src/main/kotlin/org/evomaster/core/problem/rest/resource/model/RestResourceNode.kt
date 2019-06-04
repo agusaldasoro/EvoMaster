@@ -121,7 +121,7 @@ class RestResourceNode(
 
     //if only get
     fun isIndependent() : Boolean{
-        return verbs[RestResourceTemplateHandler.getIndexOfHttpVerb(HttpVerb.GET)] && verbs.filter {it}.size == 1
+        return resourceToTable.paramToTable.isEmpty() && verbs[RestResourceTemplateHandler.getIndexOfHttpVerb(HttpVerb.GET)] && verbs.filter {it}.size == 1
     }
 
     // if only post, the resource does not contain any independent action
@@ -656,7 +656,8 @@ class RestResourceNode(
     private fun getSegment(flatten : Boolean, target: PathRToken) : String{
         if (!flatten) return target.segment
         val nearLevel = target.nearestParamLevel
-        val array = tokens.values.filter { it.level > nearLevel && it.level < target.level}.flatMap { if(it.subTokens.isNotEmpty()) it.subTokens.map { s->s.getKey() } else mutableListOf(it.getKey()) }.toTypedArray()
+        val array = tokens.values.filter { it.level > nearLevel && (if(target.isParameter) it.level < target.level else it.level <= target.level)}
+                .flatMap { if(it.subTokens.isNotEmpty()) it.subTokens.map { s->s.getKey() } else mutableListOf(it.getKey()) }.toTypedArray()
         return ParamUtil.generateParamId(array)
     }
 
@@ -684,10 +685,12 @@ class RestResourceNode(
         return segments.getValue(flatten)
     }
 
-    fun initSegments(){
-        val levels = tokens.values.filter { it.isParameter }.map { it.level }.toSet().toList().sorted()
+    private fun initSegments(){
+        val levels = mutableSetOf<Int>()
+        tokens.values.filter { it.isParameter }.forEach { levels.add(it.level) }
+        if (!path.isLastElementAParameter()) levels.add(tokens.size)
         arrayOf(true, false).forEach { flatten->
-            segments.put(flatten, levels.map { getSegment(flatten, it) })
+            segments.putIfAbsent(flatten, levels.toList().sorted().map { getSegment(flatten, it) })
         }
     }
 

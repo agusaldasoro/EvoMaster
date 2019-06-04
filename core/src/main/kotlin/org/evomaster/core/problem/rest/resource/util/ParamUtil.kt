@@ -81,9 +81,10 @@ class ParamUtil {
                 val valueGene = getValueGene(bp.gene)
                 val pValueGene = getValueGene(params[0].gene)
                 if(valueGene !is ObjectGene
-                        || pValueGene !is ObjectGene)
-                    throw IllegalArgumentException("cannot bind")
-
+                        || pValueGene !is ObjectGene){
+                    //log.warn("improper BodyParam without ObjectGene")
+                    return
+                }
                 if((valueGene).fields.map { g -> g.name }.containsAll((pValueGene).fields.map { g -> g.name })){
                     valueGene.copyValueFrom(pValueGene)
                 }

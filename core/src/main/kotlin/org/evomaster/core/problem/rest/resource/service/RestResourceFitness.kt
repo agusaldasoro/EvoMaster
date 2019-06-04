@@ -2,6 +2,7 @@ package org.evomaster.core.problem.rest.resource.service
 
 
 import com.google.inject.Inject
+import org.apache.commons.lang3.mutable.Mutable
 import org.evomaster.core.database.DbAction
 import org.evomaster.core.database.DbActionTransformer
 import org.evomaster.core.problem.rest.RestAction
@@ -27,9 +28,6 @@ class RestResourceFitness : AbstractRestFitness<RestResourceIndividual>() {
     private lateinit var sampler : RestResourceSampler
 
     @Inject
-    private lateinit var rm: ResourceManageService
-
-    @Inject
     private lateinit var dm: ResourceDepManageService
 
     companion object {
@@ -49,15 +47,14 @@ class RestResourceFitness : AbstractRestFitness<RestResourceIndividual>() {
 
         //used for things like chaining "location" paths
         val chainState = mutableMapOf<String, String>()
-        val previousDbAction = mutableListOf<DbAction>()
+        val sqlIdMap = mutableMapOf<Long, Long>()
 
         //run the test, one action at a time
         var indexOfAction = 0
 
         for (call in individual.getResourceCalls()) {
 
-            doInitializingCalls(call.dbActions, previousDbAction)
-            previousDbAction.addAll(call.dbActions)
+            doInitializingCalls(call.dbActions, sqlIdMap)
 
             var terminated = false
 
@@ -124,7 +121,7 @@ class RestResourceFitness : AbstractRestFitness<RestResourceIndividual>() {
          */
     }
 
-    private fun doInitializingCalls(allDbActions : List<DbAction>, previousDbAction : MutableList<DbAction>) {
+    private fun doInitializingCalls(allDbActions : List<DbAction>, sqlIdMap : MutableMap<Long, Long>) {
 
         if (allDbActions.isEmpty()) {
             return
@@ -140,13 +137,13 @@ class RestResourceFitness : AbstractRestFitness<RestResourceIndividual>() {
             return
         }
 
-        val dto = DbActionTransformer.transform(allDbActions, previousDbAction)
-        dto.isFirst = previousDbAction.isEmpty()
+        val dto = DbActionTransformer.transform(allDbActions, sqlIdMap)
 
-        val ok = rc.executeDatabaseCommand(dto)
-        if (!ok) {
+        val map = rc.executeDatabaseInsertionsAndGetIdMapping(dto)
+        if (map == null) {
             log.warn("Failed in executing database command")
-        }
+        }else
+            sqlIdMap.putAll(map)
     }
 
     override fun hasParameterChild(a: RestCallAction): Boolean {
