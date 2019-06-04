@@ -9,11 +9,11 @@ import org.evomaster.client.java.controller.api.dto.database.operations.Insertio
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.evomaster.client.java.controller.api.ControllerConstants.BASE_PATH;
 import static org.evomaster.client.java.controller.api.ControllerConstants.DATABASE_COMMAND;
-
 import static org.evomaster.client.java.controller.db.dsl.SqlDsl.sql;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -353,16 +353,17 @@ public class SqlScriptRunnerTest extends DatabaseTestTemplate {
                 .insertInto("Bar", 100L).d("id", "default").d("x", "42").and()
                 .insertInto("Bar", 101L).d("id", "default").d("x", "66").dtos();
 
-        SqlScriptRunner.execInsert(getConnection(), insertion1);
+        Map<Long, Long> map = SqlScriptRunner.execInsert(getConnection(), insertion1);
 
 
         List<InsertionDto> insertion2 = sql()
-                .insertInto("Foo").r("barId", 100L, false, false).and()
-                .insertInto("Foo").r("barId", 101L, false, false).dtos();
+                .insertInto("Foo").d("barId", map.get(100L).toString()).and()
+                .insertInto("Foo").d("barId", map.get(101L).toString()).dtos();
 
-        SqlScriptRunner.execInsert(getConnection(), insertion2, false);
+        SqlScriptRunner.execInsert(getConnection(), insertion2);
 
         res = SqlScriptRunner.execCommand(getConnection(), "SELECT * FROM Bar;");
         assertEquals(2, res.seeRows().size());
     }
+
 }
