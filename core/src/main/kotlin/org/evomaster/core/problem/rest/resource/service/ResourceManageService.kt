@@ -250,8 +250,9 @@ class ResourceManageService {
     private fun shrinkDbActions(relatedTables: Set<String>, dbActions: MutableList<DbAction>){
         val removedDbAction = mutableListOf<DbAction>()
 
-        dbActions.map { it.table.name }.groupingBy { it }.eachCount().filter { it.value > 1 }.keys.forEach {tableName->
-            removedDbAction.addAll(dbActions.filter { it.table.name == tableName }.run { this.subList(1, this.size) })
+        dbActions.forEachIndexed { index, dbAction ->
+            if((0 until index).any { i -> dbActions[i].table.name == dbAction.table.name &&!dbActions[i].representExistingData })
+                removedDbAction.add(dbAction)
         }
 
         if(removedDbAction.isNotEmpty()){
@@ -265,12 +266,7 @@ class ResourceManageService {
             }
         }
 
-        /*
-         TODO bind data according to action or dbaction?
 
-         Note that since we prepare data for rest actions, we bind values of dbaction based on rest actions.
-
-         */
         if(relatedTables.any { !dbActions.any { d->d.table.name.toLowerCase() == it.toLowerCase() } }){
             println("------------------------")
         }
@@ -310,6 +306,12 @@ class ResourceManageService {
 
             shrinkDbActions(relatedTables, dbActions)
 
+            /*
+             TODO bind data according to action or dbaction?
+
+             Note that since we prepare data for rest actions, we bind values of dbaction based on rest actions.
+
+             */
             dm.bindCallWithDBAction(call,dbActions, paramToTables)
 
             call.dbActions.addAll(dbActions)

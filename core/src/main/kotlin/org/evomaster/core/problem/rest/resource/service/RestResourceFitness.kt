@@ -2,7 +2,6 @@ package org.evomaster.core.problem.rest.resource.service
 
 
 import com.google.inject.Inject
-import org.apache.commons.lang3.mutable.Mutable
 import org.evomaster.core.database.DbAction
 import org.evomaster.core.database.DbActionTransformer
 import org.evomaster.core.problem.rest.RestAction

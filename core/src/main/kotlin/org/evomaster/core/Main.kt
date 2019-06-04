@@ -16,6 +16,8 @@ import org.evomaster.core.problem.rest.resource.model.RestResourceIndividual
 import org.evomaster.core.problem.rest.resource.ResourceRestModule
 import org.evomaster.core.problem.rest.service.RestModule
 import org.evomaster.core.problem.web.service.WebModule
+import org.evomaster.core.remote.NoRemoteConnectionException
+import org.evomaster.core.remote.SutProblemException
 import org.evomaster.core.remote.service.RemoteController
 import org.evomaster.core.search.Solution
 import org.evomaster.core.search.algorithms.MioAlgorithm
@@ -40,7 +42,7 @@ class Main {
         @JvmStatic
         fun main(args: Array<String>) {
 
-//            try {
+           try {
 
                 printLogo()
                 printVersion()
@@ -70,26 +72,26 @@ class Main {
                             " learn more about available options")
                 }
 
-//            } catch (e: Exception) {
-//
-//                var cause: Throwable = e
-//                while (cause.cause != null) {
-//                    cause = cause.cause!!
-//                }
-//
-//                when (cause) {
-//                    is NoRemoteConnectionException ->
-//                        logError("ERROR: ${cause.message}" +
-//                                "\n  Make sure the EvoMaster Driver for the system under test is running correctly.")
-//
-//                    is SutProblemException ->
-//                        logError("ERROR in the Remote EvoMaster Driver: ${cause.message}" +
-//                                "\n  Look at the logs of the EvoMaster Driver to help debugging this problem.")
-//
-//                    else ->
-//                        logError("ERROR: EvoMaster process terminated abruptly. Message: " + e.message)
-//                }
-//            }
+            } catch (e: Exception) {
+
+                var cause: Throwable = e
+                while (cause.cause != null) {
+                    cause = cause.cause!!
+                }
+
+                when (cause) {
+                    is NoRemoteConnectionException ->
+                        logError("ERROR: ${cause.message}" +
+                                "\n  Make sure the EvoMaster Driver for the system under test is running correctly.")
+
+                    is SutProblemException ->
+                        logError("ERROR in the Remote EvoMaster Driver: ${cause.message}" +
+                                "\n  Look at the logs of the EvoMaster Driver to help debugging this problem.")
+
+                    else ->
+                        logError("ERROR: EvoMaster process terminated abruptly. Message: " + e.message)
+                }
+            }
         }
 
         private fun logError(msg: String) {
