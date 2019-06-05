@@ -41,7 +41,7 @@ class LocalMain {
                     "--probOfSelectFromDB", "0.1",
 
                     //apply token parser
-                    "--doesApplyTokenParser","true",
+                    "--doesApplyNameMatching","true",
 
                     //disable db
                     "--heuristicsForSQL", false.toString(),

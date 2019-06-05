@@ -70,7 +70,7 @@ class ResourceManageService {
                             u.path.copy(),
                             initMode =
                                 if(config.probOfEnablingResourceDependencyHeuristics > 0.0) InitMode.WITH_DEPENDENCY
-                                else if(config.doesApplyTokenParser) InitMode.WITH_TOKEN
+                                else if(config.doesApplyNameMatching) InitMode.WITH_TOKEN
                                 else InitMode.NONE)
                 }
                 resource.actions.add(u)
