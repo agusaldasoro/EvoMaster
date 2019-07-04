@@ -1,6 +1,6 @@
-package org.evomaster.e2etests.spring.rest.postgres.ind0
+package org.evomaster.e2etests.spring.rest.postgres.basic
 
-import com.foo.spring.rest.postgres.ind0.Ind0Controller
+import com.foo.spring.rest.postgres.basic.BasicController
 import org.evomaster.core.problem.rest.HttpVerb
 import org.evomaster.e2etests.spring.rest.postgres.SpringRestPostgresTestBase
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test
 /**
  * Created by arcuri82 on 21-Jun-19.
  */
-class Ind0EMTest : SpringRestPostgresTestBase(){
+class BasicEMTest : SpringRestPostgresTestBase(){
 
     companion object {
         @BeforeAll @JvmStatic
         fun initClass() {
-            SpringRestPostgresTestBase.initKlass(Ind0Controller())
+            SpringRestPostgresTestBase.initKlass(BasicController())
         }
     }
 
@@ -23,8 +23,8 @@ class Ind0EMTest : SpringRestPostgresTestBase(){
     fun testRunEM() {
 
         runTestHandlingFlakyAndCompilation(
-                "Ind0EM",
-                "org.bar.Ind0EM",
+                "BasicEM",
+                "org.bar.BasicEM",
                 100
         ) { args ->
 

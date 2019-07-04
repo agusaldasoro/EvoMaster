@@ -10,7 +10,6 @@ import org.evomaster.core.parser.RegexHandler.createGeneForPostgresSimilarTo
 import org.evomaster.core.search.gene.*
 import org.evomaster.core.search.gene.regex.DisjunctionListRxGene
 import org.evomaster.core.search.gene.regex.RegexGene
-import org.evomaster.core.search.gene.sql.*
 
 class DbActionGeneBuilder {
 
@@ -26,7 +25,13 @@ class DbActionGeneBuilder {
 
         val fk = getForeignKey(table, column)
 
-        var gene = when {
+        /*
+            TODO should nullable columns be wrapped in a OptionalGene?
+            Maybe not, as need special gene to represent NULL even for
+            numeric values
+         */
+
+        val gene = when {
             //TODO handle all constraints and cases
             column.autoIncrement ->
                 SqlAutoIncrementGene(column.name)
@@ -147,15 +152,11 @@ class DbActionGeneBuilder {
         }
 
         if (column.primaryKey) {
-            gene = SqlPrimaryKeyGene(column.name, table.name, gene, id)
+            return SqlPrimaryKeyGene(column.name, table.name, gene, id)
+        } else {
+            return gene
         }
 
-        if(column.nullable && fk == null){
-            //FKs handle nullability in their own custom way
-            gene = SqlNullable(column.name, gene)
-        }
-
-        return gene
     }
 
     private fun handleBigIntColumn(column: Column): Gene {

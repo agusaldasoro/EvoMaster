@@ -1,7 +1,6 @@
-package org.evomaster.core.search.gene.sql
+package org.evomaster.core.search.gene
 
 import org.evomaster.core.output.OutputFormat
-import org.evomaster.core.search.gene.Gene
 import org.evomaster.core.search.service.Randomness
 
 /**
@@ -17,20 +16,12 @@ class SqlPrimaryKeyGene(name: String,
                          * Cannot be negative
                          */
                         val uniqueId: Long
-) : SqlWrapperGene(name) {
-
+) : Gene(name) {
 
     init {
         if (uniqueId < 0) {
             throw IllegalArgumentException("Negative unique id")
         }
-    }
-
-    override fun getForeignKey(): SqlForeignKeyGene? {
-        if(gene is SqlWrapperGene){
-            return gene.getForeignKey()
-        }
-        return null
     }
 
     override fun copy() = SqlPrimaryKeyGene(name, tableName, gene.copy(), uniqueId)

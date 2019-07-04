@@ -1,4 +1,4 @@
-package com.foo.spring.rest.postgres.ind0
+package com.foo.spring.rest.postgres.basic
 
 import com.foo.spring.rest.postgres.SwaggerConfiguration
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,12 +19,12 @@ import javax.persistence.EntityManager
 @EnableSwagger2
 @SpringBootApplication(exclude = [SecurityAutoConfiguration::class])
 @RequestMapping(path = ["/api/basic"])
-open class Ind0App : SwaggerConfiguration() {
+open class BasicApp : SwaggerConfiguration() {
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            SpringApplication.run(Ind0App::class.java, *args)
+            SpringApplication.run(BasicApp::class.java, *args)
         }
     }
 

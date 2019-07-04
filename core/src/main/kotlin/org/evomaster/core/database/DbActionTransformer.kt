@@ -4,9 +4,8 @@ import org.evomaster.client.java.controller.api.dto.database.operations.Database
 import org.evomaster.client.java.controller.api.dto.database.operations.InsertionDto
 import org.evomaster.client.java.controller.api.dto.database.operations.InsertionEntryDto
 import org.evomaster.core.search.gene.Gene
-import org.evomaster.core.search.gene.sql.SqlForeignKeyGene
-import org.evomaster.core.search.gene.sql.SqlPrimaryKeyGene
-import org.evomaster.core.search.gene.sql.SqlWrapperGene
+import org.evomaster.core.search.gene.SqlForeignKeyGene
+import org.evomaster.core.search.gene.SqlPrimaryKeyGene
 
 
 object DbActionTransformer {
@@ -58,8 +57,15 @@ object DbActionTransformer {
 
                 val entry = InsertionEntryDto()
 
-                if(g is SqlWrapperGene && g.getForeignKey() != null){
-                    handleSqlForeignKey(g.getForeignKey()!!, previous, entry, sqlIdMap)
+                if (g is SqlForeignKeyGene) {
+                    handleSqlForeignKey(g, previous, entry, sqlIdMap)
+                } else if (g is SqlPrimaryKeyGene) {
+                    val k = g.gene
+                    if (k is SqlForeignKeyGene) {
+                        handleSqlForeignKey(k, previous, entry, sqlIdMap)
+                    } else {
+                        entry.printableValue = g.getValueAsPrintableString(targetFormat = null)
+                    }
                 } else {
                     entry.printableValue = g.getValueAsPrintableString(targetFormat = null)
                 }

@@ -14,9 +14,7 @@ import org.evomaster.client.java.utils.SimpleLogger;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
-import java.util.Locale;
 import java.util.Objects;
 
 import static org.evomaster.client.java.controller.internal.db.ParserUtils.getWhere;
@@ -260,15 +258,7 @@ public class HeuristicsCalculator {
                     this shouldn't really happen, but looks like Hibernate generate SQL from
                     JPQL with Date handled like this :(
                  */
-                DateTimeFormatter df = new DateTimeFormatterBuilder()
-                        // case insensitive to parse JAN and FEB
-                        .parseCaseInsensitive()
-                        // add pattern
-                        .appendPattern("dd-MMM-yy")
-                        // create formatter (use English Locale to parse month names)
-                        .toFormatter(Locale.ENGLISH);
-
-                return LocalDate.parse(obj.toString(), df)
+                return LocalDate.parse(obj.toString(), DateTimeFormatter.ofPattern("dd-MMM-yy"))
                         .atStartOfDay().toInstant(ZoneOffset.UTC);
             }
         }

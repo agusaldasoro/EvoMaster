@@ -5,7 +5,6 @@ import org.evomaster.client.java.controller.internal.db.SchemaExtractor
 import org.evomaster.core.database.SqlInsertBuilder
 import org.evomaster.core.search.gene.*
 import org.evomaster.core.search.gene.regex.RegexGene
-import org.evomaster.core.search.gene.sql.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -91,7 +90,7 @@ class Ind0ExtractTest : ExtractTestBasePostgres() {
 
         val builder = SqlInsertBuilder(schema)
         val actions = builder.createSqlInsertionAction("y", setOf("jsonData"))
-        val genes = actions[0].seeGenes().flatMap { it.flatView() }
+        val genes = actions[0].seeGenes()
 
         assertTrue(genes.any { it is SqlJSONGene })
     }

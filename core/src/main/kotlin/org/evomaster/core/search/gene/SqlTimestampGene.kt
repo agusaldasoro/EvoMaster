@@ -1,7 +1,6 @@
-package org.evomaster.core.search.gene.sql
+package org.evomaster.core.search.gene
 
 import org.evomaster.core.output.OutputFormat
-import org.evomaster.core.search.gene.*
 
 
 class SqlTimestampGene(

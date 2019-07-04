@@ -1,6 +1,5 @@
-package org.evomaster.core.search.gene.sql
+package org.evomaster.core.search.gene
 
-import org.evomaster.core.search.gene.sql.SqlTimestampGene
 import org.evomaster.core.search.service.Randomness
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
