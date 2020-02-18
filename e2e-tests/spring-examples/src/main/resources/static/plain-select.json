@@ -1,0 +1,66 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Sample API",
+    "description": "API description in Markdown.",
+    "version": "1.0.0"
+  },
+  "host": "api.example.com",
+  "basePath": "/v0",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/greeting": {
+      "post": {
+        "summary": "Returns a Welcome.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "welcome",
+            "in": "body",
+            "description": "The Name to greet",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Agustina"
+                },
+                "content": {
+                  "type": "string",
+                  "example": "Hello World!"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 4
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Agustina"
+                },
+                "content": {
+                  "type": "string",
+                  "example": "Hello World!"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
