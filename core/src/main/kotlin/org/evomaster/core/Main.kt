@@ -142,7 +142,7 @@ class Main {
             val config = injector.getInstance(EMConfig::class.java)
             val idMapper = injector.getInstance(IdMapper::class.java)
 
-            val solution = run(injector)
+            val solution = run(injector, controllerInfo)
             val faults = solution.overall.potentialFoundFaults(idMapper)
 
             writeOverallProcessData(injector)
@@ -238,7 +238,7 @@ class Main {
         }
 
 
-        fun run(injector: Injector): Solution<*> {
+        fun run(injector: Injector, controllerInfo: ControllerInfoDto?): Solution<*> {
 
             val config = injector.getInstance(EMConfig::class.java)
 
@@ -269,7 +269,7 @@ class Main {
 
             LoggingUtil.getInfoLogger().info("Starting to generate test cases")
 
-            return imp.search()
+            return imp.search { solution: Solution<*>, snapshot: String -> writeTests(injector, solution, controllerInfo, snapshot) }
         }
 
         private fun checkExperimentalSettings(injector: Injector) {
@@ -317,7 +317,7 @@ class Main {
         }
 
 
-        private fun writeTests(injector: Injector, solution: Solution<*>, controllerInfoDto: ControllerInfoDto?) {
+        private fun writeTests(injector: Injector, solution: Solution<*>, controllerInfoDto: ControllerInfoDto?, snapshot: String="") {
 
             val config = injector.getInstance(EMConfig::class.java)
 
@@ -339,7 +339,7 @@ class Main {
 
             val solutions = TestSuiteSplitter.split(solution, config.testSuiteSplitType)
             solutions.filter { !it.individuals.isNullOrEmpty() }
-                    .forEach { writer.writeTests(it, controllerInfoDto?.fullName) }
+                    .forEach { writer.writeTests(it, controllerInfoDto?.fullName, snapshot) }
 
             if(config.executiveSummary){
                 writeExecutiveSummary(injector, solution, controllerInfoDto)
@@ -422,6 +422,7 @@ class Main {
             val statistics = injector.getInstance(Statistics::class.java)
             statistics.writeCoveredTargets(solution, config.coveredTargetSortedBy)
         }
+
         private fun writeExecutiveSummary(injector: Injector, solution: Solution<*>, controllerInfoDto: ControllerInfoDto?){
             val config = injector.getInstance(EMConfig::class.java)
 

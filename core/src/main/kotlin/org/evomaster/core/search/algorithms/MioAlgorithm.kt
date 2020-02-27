@@ -1,11 +1,7 @@
 package org.evomaster.core.search.algorithms
 
-import com.google.inject.Inject
 import org.evomaster.core.EMConfig
-import org.evomaster.core.problem.rest.service.ResourceSampleMethodController
-import org.evomaster.core.problem.rest.service.ResourceSampler
 import org.evomaster.core.search.Individual
-import org.evomaster.core.search.Solution
 import org.evomaster.core.search.service.SearchAlgorithm
 
 /**
@@ -17,42 +13,39 @@ class MioAlgorithm<T> : SearchAlgorithm<T>() where T : Individual {
         return EMConfig.Algorithm.MIO
     }
 
+    override fun setupBeforeSearch() {
+        // Nothing needs to be done before starting the search
+    }
 
-    override fun search(): Solution<T> {
+    override fun searchOnce() {
 
-        time.startSearch()
+        val randomP = apc.getProbRandomSampling()
 
-        while(time.shouldContinueSearch()){
+        if (archive.isEmpty()
+                || sampler.hasSpecialInit()
+                || randomness.nextBoolean(randomP)) {
 
-            val randomP = apc.getProbRandomSampling()
-
-            if(archive.isEmpty()
-                    || sampler.hasSpecialInit()
-                    || randomness.nextBoolean(randomP)) {
-
-                val ind = if(sampler.hasSpecialInit()){
-                    // If there is still special init set, sample from that
-                    sampler.smartSample()
-                } else {
-                    //note this can still be a smart sample
-                    sampler.sample()
-                }
-
-                ff.calculateCoverage(ind)?.run {
-                    archive.addIfNeeded(this)
-                    sampler.feedback(this)
-                }
-
-                continue
+            val ind = if (sampler.hasSpecialInit()) {
+                // If there is still special init set, sample from that
+                sampler.smartSample()
+            } else {
+                //note this can still be a smart sample
+                sampler.sample()
             }
 
-            val ei = archive.sampleIndividual()
+            ff.calculateCoverage(ind)?.run {
+                archive.addIfNeeded(this)
+                sampler.feedback(this)
+            }
 
-            val nMutations = apc.getNumberOfMutations()
-
-            getMutatator().mutateAndSave(nMutations, ei, archive)
+            return
         }
 
-        return archive.extractSolution()
+        val ei = archive.sampleIndividual()
+
+        val nMutations = apc.getNumberOfMutations()
+
+        getMutator().mutateAndSave(nMutations, ei, archive)
+
     }
 }

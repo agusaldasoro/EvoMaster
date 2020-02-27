@@ -76,6 +76,19 @@ class Archive<T> where T : Individual {
 
     fun extractSolution(): Solution<T> {
 
+        val uniques = getUniquePopulation()
+
+        return Solution(uniques.toMutableList(), config.testSuiteFileName, Termination.NONE)
+    }
+
+    fun extractPartialSolution(): Solution<T> {
+
+        val uniques = getUniquePopulation()
+
+        return Solution(uniques.toMutableList(), config.testSuiteFileName, Termination.IN_PROGRESS)
+    }
+
+    private fun getUniquePopulation(): MutableSet<EvaluatedIndividual<T>> {
         /*
             Note: no equals() is defined, so Set is based
             on refs to the heap.
@@ -92,10 +105,8 @@ class Archive<T> where T : Individual {
                 uniques.add(ind)
             }
         }
-
-        return Solution(uniques.toMutableList(), config.testSuiteFileName, Termination.NONE)
+        return uniques
     }
-
 
     fun isEmpty() = populations.isEmpty()
 
@@ -475,4 +486,5 @@ class Archive<T> where T : Individual {
                     Pair(idMapper.getDescriptiveId(t), solution.individuals.mapIndexed { index, f-> if (f.fitness.doesCover(t)) index else -1 }.filter { it != -1 })
                 }.toList()
     }
+
 }

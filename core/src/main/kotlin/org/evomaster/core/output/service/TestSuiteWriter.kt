@@ -46,13 +46,21 @@ class TestSuiteWriter {
 
     fun writeTests(
             solution: Solution<*>,
-            controllerName: String?
+            controllerName: String?,
+            timestamp : String = ""
     ) {
 
-        val name = TestSuiteFileName("${solution.testSuiteName}${solution.termination.suffix}")
+        val name = TestSuiteFileName(calculateClassName(solution, timestamp))
 
         val content = convertToCompilableTestCode(solution, name, controllerName)
         saveToDisk(content, config, name)
+    }
+
+    private fun calculateClassName(solution: Solution<*>, timestamp : String = ""): String {
+        if (solution.termination.equals(Termination.IN_PROGRESS)) {
+            return "${solution.testSuiteName}${solution.termination.suffix}$timestamp"
+        }
+            return "${solution.testSuiteName}${solution.termination.suffix}"
     }
 
 
