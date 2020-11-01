@@ -1,0 +1,1250 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This is the definition of the services related to `Market API`.\n",
+    "version" : "0.0.1",
+    "title" : "Market API"
+  },
+  "host" : "market.com",
+  "schemes" : [ "https", "http" ],
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "paths" : {
+    "/brands" : {
+      "get" : {
+        "tags" : [ "Brands" ],
+        "description" : "A Brand is the representation of a store.\n",
+        "operationId" : "getBrands",
+        "parameters" : [ {
+          "name" : "expand",
+          "in" : "query",
+          "description" : "Comma separated list of the collection(s) to expand.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "description" : "Offset. First record of the list",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Limit, aka page-length.",
+          "required" : false,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns the `Brands`",
+            "schema" : {
+              "$ref" : "#/definitions/brands"
+            }
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-controller" : "Brand"
+      },
+      "post" : {
+        "tags" : [ "Brands" ],
+        "description" : "Creates an `Brand` object.\n",
+        "operationId" : "createBrand",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "brand",
+          "description" : "The `Brand` to create.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/brand"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "`Brand` created",
+            "schema" : {
+              "$ref" : "#/definitions/brand"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              },
+              "Location" : {
+                "type" : "string",
+                "format" : "uri",
+                "description" : "Location of the created entity"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid request",
+            "schema" : {
+              "$ref" : "#/definitions/input-validation-error"
+            }
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "412" : {
+            "description" : "Precondition failed.",
+            "schema" : {
+              "$ref" : "#/definitions/etag-ifmatch-error"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-responses" : [ 400 ],
+        "x-controller" : "Brand"
+      },
+      "x-controller" : "Brand"
+    },
+    "/brands/{brandId}" : {
+      "get" : {
+        "tags" : [ "Brands" ],
+        "description" : "Gets the `Brand` object.\n",
+        "operationId" : "getBrand",
+        "parameters" : [ {
+          "name" : "brandId",
+          "in" : "path",
+          "description" : "The `Brand` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        }, {
+          "name" : "expand",
+          "in" : "query",
+          "description" : "Comma separated list of the collection(s) to expand.",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The `Brand` object with the given identifier.",
+            "schema" : {
+              "$ref" : "#/definitions/brand"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "304" : {
+            "description" : "Not modified"
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "412" : {
+            "description" : "Precondition failed.",
+            "schema" : {
+              "$ref" : "#/definitions/etag-ifmatch-error"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-responses" : [ 404 ],
+        "x-controller" : "Brand"
+      },
+      "delete" : {
+        "tags" : [ "Brands" ],
+        "description" : "Deletes the `Brand` object.\n",
+        "operationId" : "deleteBrand",
+        "parameters" : [ {
+          "name" : "brandId",
+          "in" : "path",
+          "description" : "The `Brand` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Successfully deleted `Brand`."
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "412" : {
+            "description" : "Precondition failed.",
+            "schema" : {
+              "$ref" : "#/definitions/etag-ifmatch-error"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-responses" : [ 404 ],
+        "x-controller" : "Brand"
+      },
+      "patch" : {
+        "tags" : [ "Brands" ],
+        "description" : "Updates the `Brand` object.\n",
+        "operationId" : "updateBrand",
+        "parameters" : [ {
+          "name" : "brandId",
+          "in" : "path",
+          "description" : "The `Brand` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        }, {
+          "in" : "body",
+          "name" : "brand",
+          "description" : "The updated `Brand` object.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/brand-patch"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successfully updated `Brand`.",
+            "schema" : {
+              "$ref" : "#/definitions/brand"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid request",
+            "schema" : {
+              "$ref" : "#/definitions/input-validation-error"
+            }
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "412" : {
+            "description" : "Precondition failed.",
+            "schema" : {
+              "$ref" : "#/definitions/etag-ifmatch-error"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-responses" : [ 400, 404 ],
+        "x-controller" : "Brand"
+      },
+      "x-controller" : "Brand"
+    },
+    "/brands/{brandId}/products" : {
+      "get" : {
+        "tags" : [ "Brands" ],
+        "description" : "Gets the `Products` objects.\n",
+        "operationId" : "getProductsFromBrand",
+        "parameters" : [ {
+          "name" : "brandId",
+          "in" : "path",
+          "description" : "The `Brand` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        }, {
+          "name" : "expand",
+          "in" : "query",
+          "description" : "Comma separated list of the collection(s) to expand.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "description" : "Offset. First record of the list",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Limit, aka page-length.",
+          "required" : false,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "All the `Products` from the brand with the given identifier.",
+            "schema" : {
+              "$ref" : "#/definitions/products"
+            }
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-responses" : [ 404 ],
+        "x-controller" : "Brand"
+      },
+      "post" : {
+        "tags" : [ "Brands" ],
+        "description" : "Creates a `Product` object in a brand.\n",
+        "operationId" : "createProductInBrand",
+        "parameters" : [ {
+          "name" : "brandId",
+          "in" : "path",
+          "description" : "The `Brand` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        }, {
+          "in" : "body",
+          "name" : "product",
+          "description" : "The `Product` to create.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/product"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "`Product` created",
+            "schema" : {
+              "$ref" : "#/definitions/product"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              },
+              "Location" : {
+                "type" : "string",
+                "format" : "uri",
+                "description" : "Location of the created entity"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid request",
+            "schema" : {
+              "$ref" : "#/definitions/input-validation-error"
+            }
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "412" : {
+            "description" : "Precondition failed.",
+            "schema" : {
+              "$ref" : "#/definitions/etag-ifmatch-error"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-responses" : [ 400 ],
+        "x-controller" : "Brand"
+      },
+      "x-controller" : "Brand"
+    },
+    "/brands/{brandId}/products/{productName}" : {
+      "get" : {
+        "tags" : [ "Product" ],
+        "description" : "Gets the `Product` object.\n",
+        "operationId" : "getProduct",
+        "parameters" : [ {
+          "name" : "brandId",
+          "in" : "path",
+          "description" : "The `Brand` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        }, {
+          "name" : "productName",
+          "in" : "path",
+          "description" : "The `Product` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        }, {
+          "name" : "expand",
+          "in" : "query",
+          "description" : "Comma separated list of the collection(s) to expand.",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The `Product` object with the given identifier.",
+            "schema" : {
+              "$ref" : "#/definitions/product"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "304" : {
+            "description" : "Not modified"
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "412" : {
+            "description" : "Precondition failed.",
+            "schema" : {
+              "$ref" : "#/definitions/etag-ifmatch-error"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-responses" : [ 404 ],
+        "x-controller" : "Brand"
+      },
+      "delete" : {
+        "tags" : [ "Products" ],
+        "description" : "Deletes the `Product` object.\n",
+        "operationId" : "deleteProduct",
+        "parameters" : [ {
+          "name" : "brandId",
+          "in" : "path",
+          "description" : "The `Brand` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        }, {
+          "name" : "productName",
+          "in" : "path",
+          "description" : "The `Product` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Successfully deleted `Product`."
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "412" : {
+            "description" : "Precondition failed.",
+            "schema" : {
+              "$ref" : "#/definitions/etag-ifmatch-error"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-responses" : [ 404 ],
+        "x-controller" : "Brand"
+      },
+      "patch" : {
+        "tags" : [ "Products" ],
+        "description" : "Updates the `Product` object.\n",
+        "operationId" : "updateProduct",
+        "parameters" : [ {
+          "name" : "brandId",
+          "in" : "path",
+          "description" : "The `Brand` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        }, {
+          "name" : "productName",
+          "in" : "path",
+          "description" : "The `Product` identifier or name",
+          "required" : true,
+          "type" : "string",
+          "format" : "identifier"
+        }, {
+          "in" : "body",
+          "name" : "product",
+          "description" : "The updated `Product` object.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/product-patch"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successfully updated `Product`.",
+            "schema" : {
+              "$ref" : "#/definitions/product"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid request",
+            "schema" : {
+              "$ref" : "#/definitions/input-validation-error"
+            }
+          },
+          "401" : {
+            "description" : "First, you need to tell me who you are.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "403" : {
+            "description" : "Are you trying to do something illegal here?",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "404" : {
+            "description" : "Object not found.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          },
+          "412" : {
+            "description" : "Precondition failed.",
+            "schema" : {
+              "$ref" : "#/definitions/etag-ifmatch-error"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "Entity Tag"
+              }
+            }
+          },
+          "500" : {
+            "description" : "Oops... Something wrong on our side.",
+            "schema" : {
+              "$ref" : "#/definitions/error"
+            }
+          }
+        },
+        "x-responses" : [ 400, 404 ],
+        "x-controller" : "Brand"
+      },
+      "x-controller" : "Brand"
+    }
+  },
+  "definitions" : {
+    "brands" : {
+      "type" : "object",
+      "properties" : {
+        "items" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/brand"
+          }
+        },
+        "_total" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/brands__links"
+        },
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      },
+      "description" : "A `Brand` collection.",
+      "x-collection" : {
+        "schema" : {
+          "$ref" : "#/definitions/brand"
+        }
+      },
+      "x-links" : {
+        "prev" : {
+          "schema" : {
+            "$ref" : "#/definitions/brands"
+          }
+        },
+        "next" : {
+          "schema" : {
+            "$ref" : "#/definitions/brands"
+          }
+        }
+      }
+    },
+    "brand" : {
+      "type" : "object",
+      "required" : [ "id", "name" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "identifier"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "Name of the `Brand`"
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Description of the `Brand`"
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "Type of `Brand`",
+          "enum" : [ "online", "store" ]
+        },
+        "owner" : {
+          "type" : "string",
+          "description" : "the name of the owner of the Brand"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/brand__links"
+        },
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      },
+      "description" : "A `Brand` is the object used to represent the store.",
+      "x-links-to-collections" : [ "products" ],
+      "x-links" : {
+        "products" : {
+          "description" : "The different products that this `Brand` has",
+          "schema" : {
+            "$ref" : "#/definitions/products"
+          }
+        }
+      }
+    },
+    "products" : {
+      "type" : "object",
+      "properties" : {
+        "items" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/product"
+          }
+        },
+        "_total" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/products__links"
+        },
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      },
+      "description" : "A `Product` collection.",
+      "x-collection" : {
+        "schema" : {
+          "$ref" : "#/definitions/product"
+        }
+      },
+      "x-links" : {
+        "prev" : {
+          "schema" : {
+            "$ref" : "#/definitions/products"
+          }
+        },
+        "next" : {
+          "schema" : {
+            "$ref" : "#/definitions/products"
+          }
+        }
+      }
+    },
+    "product" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "identifier"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "Name of the `Product`"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/product__links"
+        },
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      },
+      "description" : "A `Product` is the object used to represent the each item that the store sells.",
+      "x-links" : { }
+    },
+    "input-validation-error" : {
+      "type" : "object",
+      "discriminator" : "type",
+      "properties" : {
+        "error_type" : {
+          "$ref" : "#/definitions/error-type"
+        },
+        "message" : {
+          "type" : "string"
+        },
+        "per_property_error_messages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/field-input-validation-error"
+          }
+        },
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      },
+      "description" : "Generic validation error",
+      "x-pointer" : "./errors.yaml#/definitions/input-validation-error"
+    },
+    "error-type" : {
+      "type" : "string",
+      "properties" : {
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      },
+      "description" : "The different types of error",
+      "enum" : [ "unauthorized", "forbidden", "not_found", "not_allowed", "gone", "precondition_failed", "missing_parameter", "missing_field", "invalid_value", "immutable_object", "segment_ranker", "not_implemented", "internal_server_error", "invalid_input", "operation_not_permitted", "entity_in_use", "conflict" ],
+      "x-pointer" : "./errors.yaml#/definitions/error-type"
+    },
+    "field-input-validation-error" : {
+      "type" : "object",
+      "properties" : {
+        "error_type" : {
+          "$ref" : "#/definitions/error-type"
+        },
+        "field" : {
+          "type" : "string"
+        },
+        "value" : {
+          "type" : "string"
+        },
+        "message" : {
+          "type" : "string"
+        },
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      },
+      "x-pointer" : "./errors.yaml#/definitions/field-input-validation-error"
+    },
+    "error" : {
+      "type" : "object",
+      "properties" : {
+        "error_type" : {
+          "$ref" : "#/definitions/error-type"
+        },
+        "message" : {
+          "type" : "string"
+        },
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      },
+      "x-pointer" : "./errors.yaml#/definitions/error"
+    },
+    "etag-ifmatch-error" : {
+      "type" : "object",
+      "properties" : {
+        "error_type" : {
+          "$ref" : "#/definitions/error-type"
+        },
+        "message" : {
+          "type" : "string"
+        },
+        "stored_entity" : {
+          "type" : "object",
+          "description" : "The content of entity as it is stored",
+          "properties" : { }
+        },
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      },
+      "description" : "Used when the ETag check fails (If-Match).",
+      "x-pointer" : "./errors.yaml#/definitions/etag-ifmatch-error"
+    },
+    "brand-patch" : {
+      "type" : "object",
+      "required" : [ "id", "name" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "identifier"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "Name of the `Brand`"
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Description of the `Brand`"
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "Type of `Brand`",
+          "enum" : [ "online", "store" ]
+        },
+        "owner" : {
+          "type" : "string",
+          "description" : "the name of the owner of the Brand"
+        }
+      },
+      "description" : "A `Brand` is the object used to represent the store.",
+      "x-patch-model" : true
+    },
+    "product-patch" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "identifier"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "Name of the `Product`"
+        }
+      },
+      "description" : "A `Product` is the object used to represent the each item that the store sells.",
+      "x-patch-model" : true
+    },
+    "link" : {
+      "type" : "object",
+      "properties" : {
+        "rel" : {
+          "type" : "string",
+          "enum" : [ "self", "canonical", "collection", "children", "parent", "dependency", "dependencies", "dependent", "prev", "next" ]
+        },
+        "href" : {
+          "type" : "string",
+          "format" : "url"
+        },
+        "_allowed" : {
+          "type" : "array",
+          "description" : "Array of allowed HTTP methods",
+          "readOnly" : true,
+          "items" : {
+            "type" : "string"
+          },
+          "x-allowed" : true
+        }
+      }
+    },
+    "brands__links" : {
+      "properties" : {
+        "next" : {
+          "$ref" : "#/definitions/link"
+        },
+        "prev" : {
+          "$ref" : "#/definitions/link"
+        },
+        "self" : {
+          "$ref" : "#/definitions/link"
+        },
+        "canonical" : {
+          "$ref" : "#/definitions/link"
+        }
+      },
+      "description" : "Generated links for [brands] (x-links)",
+      "x-read-only" : true,
+      "x-flattened" : "brands"
+    },
+    "brand__links" : {
+      "properties" : {
+        "self" : {
+          "$ref" : "#/definitions/link"
+        },
+        "canonical" : {
+          "$ref" : "#/definitions/link"
+        },
+        "products" : {
+          "$ref" : "#/definitions/link"
+        }
+      },
+      "description" : "Generated links for [brand] (x-links)",
+      "x-read-only" : true,
+      "x-flattened" : "brand"
+    },
+    "products__links" : {
+      "properties" : {
+        "next" : {
+          "$ref" : "#/definitions/link"
+        },
+        "prev" : {
+          "$ref" : "#/definitions/link"
+        },
+        "self" : {
+          "$ref" : "#/definitions/link"
+        },
+        "canonical" : {
+          "$ref" : "#/definitions/link"
+        }
+      },
+      "description" : "Generated links for [products] (x-links)",
+      "x-read-only" : true,
+      "x-flattened" : "products"
+    },
+    "product__links" : {
+      "properties" : {
+        "self" : {
+          "$ref" : "#/definitions/link"
+        },
+        "canonical" : {
+          "$ref" : "#/definitions/link"
+        }
+      },
+      "description" : "Generated links for [product] (x-links)",
+      "x-read-only" : true,
+      "x-flattened" : "product"
+    }
+  },
+  "parameters" : {
+    "brand-id" : {
+      "name" : "brandId",
+      "in" : "path",
+      "description" : "The `Brand` identifier or name",
+      "required" : true,
+      "type" : "string",
+      "format" : "identifier"
+    },
+    "product-name" : {
+      "name" : "productName",
+      "in" : "path",
+      "description" : "The `Product` identifier or name",
+      "required" : true,
+      "type" : "string",
+      "format" : "identifier"
+    }
+  },
+  "responses" : {
+    "202" : {
+      "description" : "Accepted"
+    },
+    "304" : {
+      "description" : "Not modified"
+    },
+    "400" : {
+      "description" : "Invalid request",
+      "schema" : {
+        "$ref" : "#/definitions/input-validation-error"
+      }
+    },
+    "401" : {
+      "description" : "First, you need to tell me who you are.",
+      "schema" : {
+        "$ref" : "#/definitions/error"
+      }
+    },
+    "403" : {
+      "description" : "Are you trying to do something illegal here?",
+      "schema" : {
+        "$ref" : "#/definitions/error"
+      }
+    },
+    "404" : {
+      "description" : "Object not found.",
+      "schema" : {
+        "$ref" : "#/definitions/error"
+      }
+    },
+    "406" : {
+      "description" : "Not acceptable"
+    },
+    "409" : {
+      "description" : "Request conflict with current state of the server.",
+      "schema" : {
+        "$ref" : "#/definitions/error"
+      }
+    },
+    "412" : {
+      "description" : "Precondition failed.",
+      "schema" : {
+        "$ref" : "#/definitions/etag-ifmatch-error"
+      },
+      "headers" : {
+        "ETag" : {
+          "type" : "string",
+          "description" : "Entity Tag"
+        }
+      }
+    },
+    "415" : {
+      "description" : "Not supported"
+    },
+    "500" : {
+      "description" : "Oops... Something wrong on our side.",
+      "schema" : {
+        "$ref" : "#/definitions/error"
+      }
+    }
+  }
+}

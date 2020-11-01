@@ -1,9 +1,9 @@
 package com.foo.rest.examples.spring.db.directint;
 
-import com.foo.rest.examples.spring.db.SpringWithDbController;
+import com.foo.rest.examples.spring.db.SpringWithH2DbController;
 import org.evomaster.client.java.controller.InstrumentedSutStarter;
 
-public class DbDirectIntController extends SpringWithDbController {
+public class DbDirectIntController extends SpringWithH2DbController {
 
     public DbDirectIntController() {
         super(DbDirectIntApplication.class);

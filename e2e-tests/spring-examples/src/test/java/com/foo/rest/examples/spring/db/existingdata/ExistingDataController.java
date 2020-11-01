@@ -1,11 +1,11 @@
 package com.foo.rest.examples.spring.db.existingdata;
 
-import com.foo.rest.examples.spring.db.SpringWithDbController;
+import com.foo.rest.examples.spring.db.SpringWithH2DbController;
 
 /**
  * Created by arcuri82 on 19-Jun-19.
  */
-public class ExistingDataController extends SpringWithDbController {
+public class ExistingDataController extends SpringWithH2DbController {
 
     public ExistingDataController() {
         super(ExistingDataApp.class);

@@ -11,12 +11,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class SpringWithDbController extends SpringController {
+public class SpringWithH2DbController extends SpringController {
 
     protected Connection connection;
 
 
-    protected SpringWithDbController(Class<?> applicationClass) {
+    protected SpringWithH2DbController(Class<?> applicationClass) {
         super(applicationClass);
     }
 

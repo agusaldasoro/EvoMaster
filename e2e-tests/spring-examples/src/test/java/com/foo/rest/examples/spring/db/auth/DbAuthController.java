@@ -1,6 +1,6 @@
 package com.foo.rest.examples.spring.db.auth;
 
-import com.foo.rest.examples.spring.db.SpringWithDbController;
+import com.foo.rest.examples.spring.db.SpringWithH2DbController;
 import org.evomaster.client.java.controller.AuthUtils;
 import org.evomaster.client.java.controller.api.dto.AuthenticationDto;
 import org.evomaster.client.java.controller.db.DbCleaner;
@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-public class DbAuthController extends SpringWithDbController {
+public class DbAuthController extends SpringWithH2DbController {
 
     private static final String userId = "foo";
     private static final String password = "123";
